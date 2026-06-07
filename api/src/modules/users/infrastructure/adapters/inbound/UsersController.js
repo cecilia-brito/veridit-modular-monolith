@@ -1,0 +1,86 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UsersController = void 0;
+const common_1 = require("@nestjs/common");
+const RegisterUserUseCase_1 = require("../../../application/ports/in/RegisterUserUseCase");
+const LoginUseCase_1 = require("../../../application/ports/in/LoginUseCase");
+const RecoverPasswordUseCase_1 = require("../../../application/ports/in/RecoverPasswordUseCase");
+const LogoutUseCase_1 = require("../../../application/ports/in/LogoutUseCase");
+let UsersController = class UsersController {
+    constructor(registerUserUseCase, loginUseCase, recoverPasswordUseCase, logoutUseCase) {
+        this.registerUserUseCase = registerUserUseCase;
+        this.loginUseCase = loginUseCase;
+        this.recoverPasswordUseCase = recoverPasswordUseCase;
+        this.logoutUseCase = logoutUseCase;
+    }
+    async register(body) {
+        const userId = await this.registerUserUseCase.registerUser(body);
+        return { id: userId, message: 'Usuário cadastrado com sucesso' };
+    }
+    async login(body) {
+        const result = await this.loginUseCase.login(body);
+        return result;
+    }
+    async recoverPassword(email) {
+        await this.recoverPasswordUseCase.recoverPassword(email);
+        return { message: 'Se o e-mail existir, um link de recuperação foi enviado' };
+    }
+    async logout(userId) {
+        await this.logoutUseCase.logout(userId);
+        return { message: 'Logout realizado com sucesso' };
+    }
+};
+exports.UsersController = UsersController;
+__decorate([
+    (0, common_1.Post)('register'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "register", null);
+__decorate([
+    (0, common_1.Post)('login'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "login", null);
+__decorate([
+    (0, common_1.Post)('recover-password'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Body)('email')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "recoverPassword", null);
+__decorate([
+    (0, common_1.Post)('logout'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Body)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "logout", null);
+exports.UsersController = UsersController = __decorate([
+    (0, common_1.Controller)('users'),
+    __param(0, (0, common_1.Inject)(RegisterUserUseCase_1.RegisterUserUseCaseToken)),
+    __param(1, (0, common_1.Inject)(LoginUseCase_1.LoginUseCaseToken)),
+    __param(2, (0, common_1.Inject)(RecoverPasswordUseCase_1.RecoverPasswordUseCaseToken)),
+    __param(3, (0, common_1.Inject)(LogoutUseCase_1.LogoutUseCaseToken)),
+    __metadata("design:paramtypes", [Object, Object, Object, Object])
+], UsersController);
+//# sourceMappingURL=UsersController.js.map
