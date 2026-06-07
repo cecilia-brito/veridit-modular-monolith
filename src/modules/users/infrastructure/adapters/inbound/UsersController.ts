@@ -1,9 +1,9 @@
 import { Controller, Post, Body, Inject, HttpCode, HttpStatus } from '@nestjs/common';
-import { RegisterUserUseCase, RegisterUserUseCaseToken, RegisterUserCommand } from '../../../../application/ports/in/RegisterUserUseCase';
-import { LoginUseCase, LoginUseCaseToken } from '../../../../application/ports/in/LoginUseCase';
-import { RecoverPasswordUseCase, RecoverPasswordUseCaseToken } from '../../../../application/ports/in/RecoverPasswordUseCase';
-import { LogoutUseCase, LogoutUseCaseToken } from '../../../../application/ports/in/LogoutUseCase';
-import { LoginCommand } from '../../../../application/ports/in/dto/LoginCommand';
+import { RegisterUserUseCase, RegisterUserUseCaseToken, RegisterUserCommand } from '../../../application/ports/in/RegisterUserUseCase';
+import { LoginUseCase, LoginUseCaseToken } from '../../../application/ports/in/LoginUseCase';
+import { RecoverPasswordUseCase, RecoverPasswordUseCaseToken } from '../../../application/ports/in/RecoverPasswordUseCase';
+import { LogoutUseCase, LogoutUseCaseToken } from '../../../application/ports/in/LogoutUseCase';
+import { LoginCommand } from '../../../application/ports/in/dto/LoginCommand';
 
 @Controller('users')
 export class UsersController {
@@ -19,7 +19,7 @@ export class UsersController {
 
     @Inject(LogoutUseCaseToken)
     private readonly logoutUseCase: LogoutUseCase,
-  ) {}
+  ) { }
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
