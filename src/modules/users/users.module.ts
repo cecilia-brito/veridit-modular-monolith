@@ -12,8 +12,11 @@ import { UserRepositoryPortToken } from './application/ports/out/UserRepositoryP
 import { PrismaUserRepository } from './infrastructure/adapters/outbound/PrismaUserRepository';
 import { MailerPortToken } from './application/ports/out/MailerPort';
 import { NestMailerAdapter } from './infrastructure/adapters/outbound/NestMailerAdapter';
+import { AuthModule } from 'src/shared/infrastructure/auth/auth.module';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
+  imports: [PrismaModule, AuthModule],
   controllers: [UsersController],
   providers: [
     {

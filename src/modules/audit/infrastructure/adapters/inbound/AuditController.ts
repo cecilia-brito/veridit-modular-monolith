@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Inject, HttpCode, HttpStatus } from '@nestjs/common';
-import { ListRecordsUseCase, ListRecordsUseCaseToken } from '../../../../application/ports/in/ListRecordsUseCase';
+import { ListRecordsUseCase, ListRecordsUseCaseToken } from '../../../application/ports/in/ListRecordsUseCase';
 
 @Controller('audit')
 export class AuditController {
