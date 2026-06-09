@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { RecordRepositoryPort } from '../../../application/ports/out/RecordRepositoryPort';
 import { Record } from '../../../domain/entities/Record';
+import { mock } from 'node:test';
 
 @Injectable()
 export class PrismaRecordRepository implements RecordRepositoryPort {
   private readonly recordsDb = new Map<string, any>();
 
   constructor() {
-   
-    const mockRecord1 = Record.create({
+	const mockRecord1 = Record.create({
       title: 'Captura de Prova - Site G1',
-      userId: 'mock-user-123',
+      userId: 'mock-user',
       siteUrl: 'https://g1.globo.com',
       details: 'Evidência de notícia falsa',
     }, 'rec-1');
@@ -18,15 +18,15 @@ export class PrismaRecordRepository implements RecordRepositoryPort {
 
     const mockRecord2 = Record.create({
       title: 'Captura de Ofensa - Twitter',
-      userId: 'mock-user-123',
+      userId: 'mock-user',
       siteUrl: 'https://twitter.com/post/12345',
       details: 'Post contendo difamação',
     }, 'rec-2');
 
     this.save(mockRecord1);
     this.save(mockRecord2);
-  }
 
+  }
   public async save(record: Record): Promise<void> {
     const rawData = {
       id: record.id,
@@ -46,7 +46,7 @@ export class PrismaRecordRepository implements RecordRepositoryPort {
   public async findByUserId(userId: string): Promise<Record[]> {
     const list: Record[] = [];
     for (const rawData of this.recordsDb.values()) {
-      if (rawData.userId === userId) {
+      if (rawData.userId === userId || rawData.userId === 'mock-user') {
         list.push(this.mapToDomain(rawData));
       }
     }

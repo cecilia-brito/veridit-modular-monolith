@@ -44,4 +44,5 @@ export class RegisterUserService implements RegisterUserUseCase {
 
     return user.id;
   }
+  
 }
