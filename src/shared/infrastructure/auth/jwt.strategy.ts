@@ -8,12 +8,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: 'VERIDIT_SUPER_SECRET_KEY_2026', // Em produção, isso deve vir do .env
+      secretOrKey: process.env.JWT_SECRET, 
     });
   }
 
   async validate(payload: any) {
-    // O retorno deste método é injetado automaticamente no objeto `req.user`
     return { 
       sub: payload.sub, 
       email: payload.email, 
