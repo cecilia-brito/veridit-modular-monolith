@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Shield } from 'lucide-react';
-import { api } from '../../services/api'; // <-- MUDANÇA 1: Usando o nosso carteiro oficial
+import { api } from '../../services/api'; 
 
 interface LoginScreenProps {
   onNavigate: (screen: string) => void;
@@ -20,17 +20,12 @@ export function LoginScreen({ onNavigate }: LoginScreenProps) {
     setLoading(true);
     
     try {
-      // MUDANÇA 2: Usando api.post e apenas a rota relativa
       const response = await api.post('/users/login', {
         email,
         password,
       });
 
-      // MUDANÇA 3: Garantindo o nome correto do token retornado pelo backend (access_token)
       localStorage.setItem('@Veridit:token', response.data.access_token);
-      
-      // Se o seu backend também retorna o ID, descomente a linha abaixo:
-      // localStorage.setItem('@Veridit:id', response.data.userId); 
       
       onNavigate('listagem');
     } catch (err: any) {
@@ -50,7 +45,6 @@ export function LoginScreen({ onNavigate }: LoginScreenProps) {
     }
     
     try {
-      // MUDANÇA 4: Usando api.post e apenas a rota relativa
       const response = await api.post('/users/recover-password', { email });
       setSuccess(response.data.message || 'Instruções de recuperação enviadas com sucesso.');
     } catch (err: any) {

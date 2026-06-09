@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Shield, Plus, Download, FileText, Package } from 'lucide-react';
 import { api } from '../../services/api'
-import axios from 'axios';
 
 interface ListagemScreenProps {
   onNavigate: (screen: string) => void;

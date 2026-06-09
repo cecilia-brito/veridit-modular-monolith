@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Shield, ArrowLeft } from 'lucide-react';
-import axios from 'axios';
+import { api } from '../../services/api'
 
 interface CadastroScreenProps {
   onNavigate: (screen: string) => void;
@@ -20,7 +20,7 @@ export function CadastroScreen({ onNavigate }: CadastroScreenProps) {
     setError(''); 
     
     try {
-      await axios.post('http://localhost:3000/users/register', {
+      await api.post('/users/register', {
         fullName: nomeCompleto,
         email: email,
         password: senha,
