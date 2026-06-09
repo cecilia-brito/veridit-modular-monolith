@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Inject, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Param, Inject, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { ListRecordsUseCase, ListRecordsUseCaseToken } from '../../../application/ports/in/ListRecordsUseCase';
+import { JwtAuthGuard } from 'src/shared/infrastructure/auth/jwt-auth.guard';
 
 @Controller('audit')
 export class AuditController {

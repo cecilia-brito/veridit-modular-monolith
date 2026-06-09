@@ -11,7 +11,6 @@ export class ListRecordsService implements ListRecordsUseCase {
   ) {}
 
   public async execute(userId: string): Promise<Record[]> {
-    // Busca registros pertencentes ao usuário (RBAC & ownership conforme ADR-002)
     return this.recordRepository.findByUserId(userId);
   }
 }
