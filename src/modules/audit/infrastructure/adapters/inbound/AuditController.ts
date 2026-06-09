@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Inject, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Param, Inject, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { ListRecordsUseCase, ListRecordsUseCaseToken } from '../../../application/ports/in/ListRecordsUseCase';
+import { JwtAuthGuard } from 'src/shared/infrastructure/auth/jwt-auth.guard';
 
 @Controller('audit')
 export class AuditController {
@@ -7,13 +8,12 @@ export class AuditController {
     @Inject(ListRecordsUseCaseToken)
     private readonly listRecordsUseCase: ListRecordsUseCase,
   ) {}
-
+  @UseGuards(JwtAuthGuard)
   @Get('records/:userId')
   @HttpCode(HttpStatus.OK)
   public async listUserRecords(@Param('userId') userId: string) {
     const records = await this.listRecordsUseCase.execute(userId);
     
-    // Mapear para DTO de resposta para evitar expor objetos de domínio diretamente
     return records.map(record => ({
       id: record.id,
       title: record.title,

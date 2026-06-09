@@ -7,7 +7,7 @@ export class PrismaRecordRepository implements RecordRepositoryPort {
   private readonly recordsDb = new Map<string, any>();
 
   constructor() {
-    // Adiciona alguns registros simulados para demonstração do esqueleto
+   
     const mockRecord1 = Record.create({
       title: 'Captura de Prova - Site G1',
       userId: 'mock-user-123',
@@ -70,7 +70,6 @@ export class PrismaRecordRepository implements RecordRepositoryPort {
       rawData.id,
     );
 
-    // Ajusta o status, datas e contadores internos
     if (rawData.status === 'COMPLETED') {
       record.complete(rawData.imageCount, rawData.videoCount, rawData.details);
     } else if (rawData.status === 'FAILED') {
