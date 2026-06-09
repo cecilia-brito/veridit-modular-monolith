@@ -14,12 +14,10 @@ export class RegisterUserService implements RegisterUserUseCase {
   ) {}
 
   public async registerUser(command: RegisterUserCommand): Promise<string> {
-    // Validações sintáticas por Value Objects
     const emailVO = Email.create(command.email);
     const cpfVO = CPF.create(command.cpf);
     const passwordVO = Password.create(command.password);
 
-    // Validações de unicidade de e-mail e CPF
     const existingEmail = await this.userRepository.findByEmail(emailVO.value);
     if (existingEmail) {
       throw new Error('E-mail já cadastrado');
@@ -30,11 +28,9 @@ export class RegisterUserService implements RegisterUserUseCase {
       throw new Error('CPF já cadastrado');
     }
 
-    // Criar hash da senha
     const hashedPasswordValue = await passwordVO.getHashedValue();
     const hashedPasswordVO = Password.createFromHash(hashedPasswordValue);
 
-    // Instanciar Entidade de Domínio
     const user = User.create({
       fullName: command.fullName,
       email: emailVO,
@@ -44,7 +40,6 @@ export class RegisterUserService implements RegisterUserUseCase {
       oabNumber: command.oabNumber,
     });
 
-    // Persistir usando porta de saída
     await this.userRepository.save(user);
 
     return user.id;
