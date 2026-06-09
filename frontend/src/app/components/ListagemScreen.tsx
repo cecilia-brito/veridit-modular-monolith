@@ -29,7 +29,7 @@ export function ListagemScreen({ onNavigate }: ListagemScreenProps) {
           return;
         }
 
-        const response = await api.get('/audit/records');
+        const response = await api.get(`/audit/records/${id}`);
 
         setRegistros(response.data);
       } catch (err: any) {

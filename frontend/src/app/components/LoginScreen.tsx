@@ -26,7 +26,7 @@ export function LoginScreen({ onNavigate }: LoginScreenProps) {
       });
 
       localStorage.setItem('@Veridit:token', response.data.access_token);
-      
+	  localStorage.setItem('@Veridit:id', response.data.userId);
       onNavigate('listagem');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Credenciais inválidas. Verifique seu e-mail e senha.');
