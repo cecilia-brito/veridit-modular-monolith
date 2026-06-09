@@ -4,12 +4,12 @@ import { User } from '../../../domain/entities/User';
 import { Email } from '../../../domain/value-objects/Email';
 import { Password } from '../../../domain/value-objects/Password';
 import { CPF } from '../../../domain/value-objects/CPF';
-import { PrismaService } from 'src/modules/prisma/prisma.service';
+// import { PrismaService } from 'src/modules/prisma/prisma.service';
 @Injectable()
 export class PrismaUserRepository implements UserRepositoryPort {
-	constructor(private readonly prisma: PrismaService){
+	// constructor(private readonly prisma: PrismaService){
 
-	}
+	// }
 	// Simulando banco de dados em memória para o esqueleto.
 	private readonly usersDb = new Map<string, any>();
 	public async save(user: User): Promise<void> {

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../prisma/prisma.module';
+// import { PrismaModule } from '../prisma/prisma.module';
 import { CaptureController } from './infrastructure/adapters/inbound/CaptureController';
 import { StartCaptureService } from './application/usecases/StartCaptureService';
 import { StartCaptureUseCaseToken } from './application/ports/in/StartCaptureUseCase';
@@ -9,7 +9,6 @@ import { PrismaCaptureRepository } from './infrastructure/adapters/outbound/Pris
 import { CaptureRepositoryPortToken } from './application/ports/out/CaptureRepositoryPort';
 
 @Module({
-  imports: [PrismaModule],
   controllers: [CaptureController],
   providers: [
     {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CaptureRepositoryPort } from '../../../application/ports/out/CaptureRepositoryPort';
 import { CaptureSession } from '../../../domain/entities/CaptureSession';
-import { PrismaService } from '../../../../prisma/prisma.service'; // Seu módulo global do Prisma
+// import { PrismaService } from '../../../../prisma/prisma.service'; // Seu módulo global do Prisma
 
 @Injectable()
 export class PrismaCaptureRepository implements CaptureRepositoryPort {
