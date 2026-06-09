@@ -7,7 +7,7 @@ import { JwtStrategy } from './jwt.strategy';
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: 'VERIDIT_SUPER_SECRET_KEY_2026', // Deve ser exatamente a mesma secret da Strategy
+      secret: process.env.JWT_SECRET, // Deve ser exatamente a mesma secret da Strategy
       signOptions: { expiresIn: '1d' }, // Token expira em 1 dia
     }),
   ],
