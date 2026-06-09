@@ -4,7 +4,7 @@ import { FinishCaptureUseCase, FinishCaptureUseCaseToken } from '../../../applic
 import { JwtAuthGuard } from '../../../../../shared/infrastructure/auth/jwt-auth.guard'; // Assumindo que você tem o guard
 
 @Controller('captures')
-@UseGuards(JwtAuthGuard) // Protege as rotas para garantir o req.user
+@UseGuards(JwtAuthGuard) 
 export class CaptureController {
   constructor(
     @Inject(StartCaptureUseCaseToken)
@@ -12,13 +12,13 @@ export class CaptureController {
     @Inject(FinishCaptureUseCaseToken)
     private readonly finishCaptureUseCase: FinishCaptureUseCase,
   ) {}
-
+  
   @Post('start')
   async startCapture(@Body() body: { titulo: string; siteUrl: string }, @Request() req: any) {
     const id = await this.startCaptureUseCase.start({
       titulo: body.titulo,
       siteUrl: body.siteUrl,
-      userId: req.user.sub, // O sub vem do payload do JWT
+      userId: req.user.sub,
     });
     return { id, message: 'Captura iniciada com sucesso.' };
   }

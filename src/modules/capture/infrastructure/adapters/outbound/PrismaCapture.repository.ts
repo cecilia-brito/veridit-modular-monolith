@@ -5,7 +5,6 @@ import { PrismaService } from '../../../../prisma/prisma.service'; // Seu módul
 
 @Injectable()
 export class PrismaCaptureRepository implements CaptureRepositoryPort {
-  // Simulando a nossa tabela do banco de dados na memória RAM
   private readonly database = new Map<string, CaptureSession>();
 
   async save(session: CaptureSession): Promise<void> {
@@ -19,7 +18,6 @@ export class PrismaCaptureRepository implements CaptureRepositoryPort {
     
     if (!record) return null;
 
-    // Retorna uma cópia da entidade para evitar mutações acidentais na memória
     const session = new CaptureSession(
       record.id,
       record.titulo,

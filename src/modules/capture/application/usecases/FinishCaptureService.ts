@@ -16,9 +16,7 @@ export class FinishCaptureService implements FinishCaptureUseCase {
       throw new NotFoundException('Sessão de captura não encontrada.');
     }
 
-    session.finish(); // Regra de negócio encapsulada na entidade
-    
-    // Aqui seria o local ideal para chamar o MockStorageAdapter que combinamos
+    session.finish();
     
     await this.captureRepo.update(session);
   }
