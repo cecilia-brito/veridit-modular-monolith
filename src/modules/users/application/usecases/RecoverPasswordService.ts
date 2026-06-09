@@ -18,8 +18,6 @@ export class RecoverPasswordService implements RecoverPasswordUseCase {
 
     const user = await this.userRepository.findByEmail(emailVO.value);
     if (!user) {
-      // Por motivos de segurança, não dizemos se o e-mail não existe.
-      // Retornamos silenciosamente ou lançamos erro conforme a política.
       throw new NotFoundException('Usuário não encontrado');
     }
 
@@ -29,7 +27,6 @@ export class RecoverPasswordService implements RecoverPasswordUseCase {
     const subject = 'Recuperação de Senha - Veridit';
     const body = `Olá, ${user.fullName}. Use este link para resetar sua senha: ${resetUrl}`;
 
-    // Disparar e-mail pela porta de saída
     await this.mailerPort.sendEmail(user.email.value, subject, body);
   }
 }

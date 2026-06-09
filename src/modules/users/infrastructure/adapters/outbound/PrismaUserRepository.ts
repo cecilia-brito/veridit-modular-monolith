@@ -11,9 +11,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
 
 	}
 	// Simulando banco de dados em memória para o esqueleto.
-	// Em produção, seria injetado o PrismaService e executado prisma.user.*
 	private readonly usersDb = new Map<string, any>();
-	//cria o usuário no sqlite
 	public async save(user: User): Promise<void> {
 		
 		const rawData = {
