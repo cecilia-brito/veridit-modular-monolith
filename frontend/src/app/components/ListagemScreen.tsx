@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Shield, Plus, Download, FileText, Package } from 'lucide-react';
+import { api } from '../../services/api'
 import axios from 'axios';
 
 interface ListagemScreenProps {
@@ -29,11 +30,7 @@ export function ListagemScreen({ onNavigate }: ListagemScreenProps) {
           return;
         }
 
-        const response = await axios.get(`http://localhost:3000/audit/records/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const response = await api.get('/audit/records');
 
         setRegistros(response.data);
       } catch (err: any) {
