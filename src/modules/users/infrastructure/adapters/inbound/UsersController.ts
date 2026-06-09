@@ -1,10 +1,10 @@
-import { Controller, Post, Body, Inject, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Inject, HttpCode, HttpStatus, NotFoundException } from '@nestjs/common';
 import { RegisterUserUseCase, RegisterUserUseCaseToken, RegisterUserCommand } from '../../../application/ports/in/RegisterUserUseCase';
 import { LoginUseCase, LoginUseCaseToken } from '../../../application/ports/in/LoginUseCase';
 import { RecoverPasswordUseCase, RecoverPasswordUseCaseToken } from '../../../application/ports/in/RecoverPasswordUseCase';
 import { LogoutUseCase, LogoutUseCaseToken } from '../../../application/ports/in/LogoutUseCase';
 import { LoginCommand } from '../../../application/ports/in/dto/LoginCommand';
-
+import { RecoverPasswordService } from 'src/modules/users/application/usecases/RecoverPasswordService';
 @Controller('users')
 export class UsersController {
   constructor(
@@ -16,7 +16,6 @@ export class UsersController {
 
     @Inject(RecoverPasswordUseCaseToken)
     private readonly recoverPasswordUseCase: RecoverPasswordUseCase,
-
     @Inject(LogoutUseCaseToken)
     private readonly logoutUseCase: LogoutUseCase,
   ) { }
@@ -35,11 +34,12 @@ export class UsersController {
     return result;
   }
 
-  @Post('recover-password')
+  @Post('reset-password')
   @HttpCode(HttpStatus.OK)
-  public async recoverPassword(@Body('email') email: string) {
-    await this.recoverPasswordUseCase.recoverPassword(email);
-    return { message: 'Se o e-mail existir, um link de recuperação foi enviado' };
+  @Post('recover-password')
+  public async recoverPassword(@Body() body: { email: string; newPassword: string }) {
+    const result = await this.recoverPasswordUseCase.recoverPassword(body.email, body.newPassword);
+    return result;
   }
 
   @Post('logout')

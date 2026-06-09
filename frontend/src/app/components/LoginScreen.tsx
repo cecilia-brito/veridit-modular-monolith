@@ -35,20 +35,37 @@ export function LoginScreen({ onNavigate }: LoginScreenProps) {
     }
   };
 
-  const handleRecoverPassword = async () => {
+ const handleRecoverPassword = async () => {
     setError('');
     setSuccess('');
     
-    if (!email) {
-      setError('Por favor, preencha o campo de e-mail acima para recuperar a senha.');
+    // Agora exigimos que ele preencha ambos os campos para o MVP
+    if (!email || !password) {
+      setError('Para redefinir: Digite seu e-mail e a NOVA senha nos campos acima, depois clique em "Esqueci minha senha".');
       return;
     }
     
     try {
-      const response = await api.post('/users/recover-password', { email });
-      setSuccess(response.data.message || 'Instruções de recuperação enviadas com sucesso.');
+      // 1. Chama a nova rota passando a senha nova
+      const response = await api.post('/users/reset-password', { 
+        email: email,
+        newPassword: password 
+      });
+
+      // 2. O REQUISITO DA APRESENTAÇÃO: Imprime no console do navegador (F12)
+      console.log('%c=========================================', 'color: #00ff00; font-weight: bold;');
+      console.log('%c🔒 VERIDIT DEMO - MUDANÇA DE SENHA', 'color: #00ff00; font-size: 14px; font-weight: bold;');
+      console.log('E-mail alvo:', email);
+      console.log('Nova Senha registrada:', password);
+      console.log('Resposta do Servidor:', response.data);
+      console.log('%c=========================================', 'color: #00ff00; font-weight: bold;');
+
+      // 3. Mostra a mensagem de sucesso na tela
+      setSuccess('Senha alterada com sucesso! Você já pode clicar em "Entrar" com a nova senha.');
+      
     } catch (err: any) {
-      setError('Erro ao tentar processar a recuperação de senha.');
+      setError(err.response?.data?.message || 'Erro ao tentar redefinir a senha.');
+      console.error('Falha na redefinição:', err);
     }
   };
 

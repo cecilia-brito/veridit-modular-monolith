@@ -45,4 +45,7 @@ export class User extends BaseEntity<UserProps> {
   public deactivate(): void {
     this.props.isActive = false;
   }
+  public updatePassword(newPassword: string): void {
+    this.props.password = Password.create(newPassword); 
+  }
 }
