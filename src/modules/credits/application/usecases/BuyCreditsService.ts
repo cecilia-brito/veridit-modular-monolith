@@ -17,7 +17,7 @@ export class BuyCreditsService implements BuyCreditsUseCase {
     @Inject(CreditTransactionRepositoryPortToken) private readonly repo: CreditTransactionRepositoryPort,
     @Inject(PaymentGatewayPortToken) private readonly paymentGateway: PaymentGatewayPort,
     private readonly eventEmitter: EventEmitter2,
-  ) {}
+  ) { }
 
   async execute(command: BuyCreditsCommand) {
     const valor = this.PRECOS[command.pacote as keyof typeof this.PRECOS];
@@ -27,11 +27,11 @@ export class BuyCreditsService implements BuyCreditsUseCase {
 
     // 1. Cria a entidade de domínio e persiste (REQ 05)
     const transaction = CreditTransaction.create({
-  userId: command.userId,
-  pacoteNome: command.pacote,
-  valorTotal: valor,
-  metodoPagamento: command.metodoPagamento
-});
+      userId: command.userId,
+      pacoteNome: command.pacote,
+      valorTotal: valor,
+      metodoPagamento: command.metodoPagamento
+    });
     await this.repo.save(transaction);
 
     // 2. Comunica com o Gateway para gerar o payload de pagamento (REQ 06)
@@ -42,10 +42,10 @@ export class BuyCreditsService implements BuyCreditsUseCase {
     );
 
     // 3. JOB ASSÍNCRONO (Fire and Forget) (REQ 07)
-    // Desacoplado via Event Emitter conforme ADR-008
-    this.eventEmitter.emit('credit.purchased', { 
-      userEmail: command.userEmail, 
-      pacote: command.pacote 
+    // Desacoplado via Event Emitter conforme ADR-012
+    this.eventEmitter.emit('credit.purchased', {
+      userEmail: command.userEmail,
+      pacote: command.pacote
     });
 
     return {
