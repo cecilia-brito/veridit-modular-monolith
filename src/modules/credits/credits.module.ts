@@ -8,6 +8,7 @@ import { MockPaymentGateway } from './infrastructure/adapters/outbound/MockPayme
 import { PaymentGatewayPortToken } from './application/ports/out/PaymentGatewayPort';
 import { MockEmailService } from './infrastructure/adapters/outbound/MockEmailService';
 import { EmailServicePortToken } from './application/ports/out/EmailServicePort';
+import { CreditEmailListener } from './infrastructure/adapters/inbound/events/CreditEmailListener';
 
 @Module({
   controllers: [CreditsController],
@@ -16,6 +17,7 @@ import { EmailServicePortToken } from './application/ports/out/EmailServicePort'
     { provide: CreditTransactionRepositoryPortToken, useClass: MockCreditTransactionRepository },
     { provide: PaymentGatewayPortToken, useClass: MockPaymentGateway },
     { provide: EmailServicePortToken, useClass: MockEmailService },
+    CreditEmailListener,
   ],
 })
 export class CreditsModule {}

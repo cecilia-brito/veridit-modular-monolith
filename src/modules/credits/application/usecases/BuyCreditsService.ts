@@ -1,8 +1,8 @@
 import { Inject, Injectable, BadRequestException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { BuyCreditsUseCase, BuyCreditsCommand } from '../ports/in/BuyCreditsUseCase';
 import { CreditTransactionRepositoryPort, CreditTransactionRepositoryPortToken } from '../ports/out/CreditTransactionRepositoryPort';
 import { PaymentGatewayPort, PaymentGatewayPortToken } from '../ports/out/PaymentGatewayPort';
-import { EmailServicePort, EmailServicePortToken } from '../ports/out/EmailServicePort';
 import { CreditTransaction } from '../../domain/entities/CreditTransaction';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class BuyCreditsService implements BuyCreditsUseCase {
   constructor(
     @Inject(CreditTransactionRepositoryPortToken) private readonly repo: CreditTransactionRepositoryPort,
     @Inject(PaymentGatewayPortToken) private readonly paymentGateway: PaymentGatewayPort,
-    @Inject(EmailServicePortToken) private readonly emailService: EmailServicePort,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async execute(command: BuyCreditsCommand) {
@@ -42,9 +42,11 @@ export class BuyCreditsService implements BuyCreditsUseCase {
     );
 
     // 3. JOB ASSÍNCRONO (Fire and Forget) (REQ 07)
-    // Não usamos 'await' aqui. O HTTP responde rápido ao React e o e-mail processa em background!
-    this.emailService.sendPurchaseConfirmation(command.userEmail, command.pacote)
-      .catch((err) => console.error('[ASYNC JOB ERROR] Falha ao processar e-mail em background:', err));
+    // Desacoplado via Event Emitter conforme ADR-008
+    this.eventEmitter.emit('credit.purchased', { 
+      userEmail: command.userEmail, 
+      pacote: command.pacote 
+    });
 
     return {
       transactionId: transaction.id,
