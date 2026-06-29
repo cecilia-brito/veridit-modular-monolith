@@ -12,6 +12,14 @@ export interface CreditTransactionProps {
   status?: TransactionStatus;
   dataCriacao?: Date;
   dataAtualizacao?: Date;
+  telefone?: string;
+  cep?: string;
+  endereco?: string;
+  numero?: string;
+  complemento?: string;
+  bairro?: string;
+  cidade?: string;
+  estado?: string;
 }
 
 export class CreditTransaction {
@@ -26,6 +34,15 @@ export class CreditTransaction {
   private readonly _dataCriacao: Date;
   private _dataAtualizacao: Date;
 
+  private readonly _telefone?: string;
+  private readonly _cep?: string;
+  private readonly _endereco?: string;
+  private readonly _numero?: string;
+  private readonly _complemento?: string;
+  private readonly _bairro?: string;
+  private readonly _cidade?: string;
+  private readonly _estado?: string;
+
   // O construtor é privado. Forçamos a criação da entidade através do método estático 'create'.
   private constructor(props: CreditTransactionProps) {
     this._id = props.id || uuidv4();
@@ -36,6 +53,15 @@ export class CreditTransaction {
     this._status = props.status || 'PENDENTE';
     this._dataCriacao = props.dataCriacao || new Date();
     this._dataAtualizacao = props.dataAtualizacao || new Date();
+	this._telefone = props.telefone;
+    this._cep = props.cep;
+    this._endereco = props.endereco;
+    this._numero = props.numero;
+    this._complemento = props.complemento;
+    this._bairro = props.bairro;
+    this._cidade = props.cidade;
+    this._estado = props.estado;
+
   }
 
   // Fabrica da Entidade (Factory Method)
@@ -62,6 +88,15 @@ export class CreditTransaction {
   public get dataCriacao(): Date { return this._dataCriacao; }
   public get dataAtualizacao(): Date { return this._dataAtualizacao; }
 
+  //dados do faturamento
+  public get telefone(): string | undefined { return this._telefone; }
+  public get cep(): string | undefined { return this._cep; }
+  public get endereco(): string | undefined { return this._endereco; }
+  public get numero(): string | undefined { return this._numero; }
+  public get complemento(): string | undefined { return this._complemento; }
+  public get bairro(): string | undefined { return this._bairro; }
+  public get cidade(): string | undefined { return this._cidade; }
+  public get estado(): string | undefined { return this._estado; }
   // REGRAS DE NEGÓCIO DE MUTAÇÃO DE ESTADO
   // Em DDD, nós não usamos "setters" burros. Criamos métodos com significado semântico real.
   
