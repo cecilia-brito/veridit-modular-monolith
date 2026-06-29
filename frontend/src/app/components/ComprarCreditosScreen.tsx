@@ -9,6 +9,8 @@ interface ComprarCreditosScreenProps {
 export function ComprarCreditosScreen({ onNavigate }: ComprarCreditosScreenProps) {
   const [pacote, setPacote] = useState('Básico');
   const [metodoPagamento, setMetodoPagamento] = useState('Pix');
+  const [nome, setNome] = useState('');
+  const [cpf, setCpf] = useState('');
   const [telefone, setTelefone] = useState('');
   const [cep, setCEP] = useState('');
   const [cidade, setCidade] = useState('');
@@ -21,7 +23,7 @@ export function ComprarCreditosScreen({ onNavigate }: ComprarCreditosScreenProps
   // ESTADOS DE INTEGRAÇÃO DE API
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
-  const [paymentResult, setPaymentResult] = useState<{ transactionId: string; payload: string } | null>(null);
+  const [paymentResult, setPaymentResult] = useState<{ transactionId: string; payload: string; paymentQrCodeBase64?: string } | null>(null);
   const [copied, setCopied] = useState(false);
 
   const pacotes = {
@@ -41,6 +43,8 @@ export function ComprarCreditosScreen({ onNavigate }: ComprarCreditosScreenProps
       const response = await api.post('/credits/buy', {
         pacote,
         metodoPagamento,
+        nome,
+        cpf,
         telefone,
         cep,
         cidade,
@@ -54,7 +58,8 @@ export function ComprarCreditosScreen({ onNavigate }: ComprarCreditosScreenProps
       // Guarda o resultado (ID da transação e o payload/link de pagamento)
       setPaymentResult({
         transactionId: response.data.transactionId,
-        payload: response.data.paymentPayload
+        payload: response.data.paymentPayload,
+        paymentQrCodeBase64: response.data.paymentQrCodeBase64,
       });
 
     } catch (err: any) {
@@ -111,6 +116,15 @@ export function ComprarCreditosScreen({ onNavigate }: ComprarCreditosScreenProps
             
             {metodoPagamento === 'Pix' ? (
               <div>
+                {paymentResult.paymentQrCodeBase64 && (
+                  <div className="flex justify-center mb-4">
+                    <img
+                      src={`data:image/png;base64,${paymentResult.paymentQrCodeBase64}`}
+                      alt="QR Code PIX"
+                      className="w-48 h-48"
+                    />
+                  </div>
+                )}
                 <label className="block text-foreground mb-2 text-sm font-medium">Copia e Cola do PIX:</label>
                 <div className="flex gap-2">
                   <input
@@ -172,6 +186,32 @@ export function ComprarCreditosScreen({ onNavigate }: ComprarCreditosScreenProps
           <h2 className="text-foreground mb-6">Dados de Faturamento</h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-foreground mb-2">Nome Completo</label>
+                <input
+                  type="text"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  placeholder="Seu nome"
+                  className="w-full px-4 py-3 bg-input-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+                  required
+                  disabled={loading}
+                />
+              </div>
+              <div>
+                <label className="block text-foreground mb-2">CPF</label>
+                <input
+                  type="text"
+                  value={cpf}
+                  onChange={(e) => setCpf(e.target.value)}
+                  placeholder="000.000.000-00"
+                  className="w-full px-4 py-3 bg-input-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+                  required
+                  disabled={loading}
+                />
+              </div>
+            </div>
             <div className="grid md:grid-cols-4 gap-4">
               <div>
                 <label className="block text-foreground mb-2">Telefone</label>

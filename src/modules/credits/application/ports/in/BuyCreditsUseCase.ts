@@ -1,6 +1,8 @@
 export interface BuyCreditsCommand {
   userId: string;
   userEmail: string;
+  nome: string;
+  cpf: string;
   pacote: string;
   metodoPagamento: 'Pix' | 'Mercado Pago';
   telefone: string;
@@ -16,5 +18,5 @@ export interface BuyCreditsCommand {
 export const BuyCreditsUseCaseToken = Symbol('BuyCreditsUseCase');
 
 export interface BuyCreditsUseCase {
-  execute(command: BuyCreditsCommand): Promise<{ transactionId: string; paymentPayload: string }>;
+  execute(command: BuyCreditsCommand): Promise<{ transactionId: string; paymentPayload: string; paymentQrCodeBase64?: string }>;
 }

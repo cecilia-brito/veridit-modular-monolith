@@ -6,6 +6,9 @@ export type PaymentMethod = 'Pix' | 'Mercado Pago';
 export interface CreditTransactionProps {
   id?: string;
   userId: string;
+  userName: string;
+  userEmail: string;
+  userCpf: string;
   pacoteNome: string;
   valorTotal: number;
   metodoPagamento: PaymentMethod;
@@ -27,6 +30,9 @@ export class CreditTransaction {
   // Ninguém fora desta classe pode alterar estes dados diretamente sem passar pelas regras de negócio.
   private readonly _id: string;
   private readonly _userId: string;
+  private readonly _userName: string;
+  private readonly _userEmail: string;
+  private readonly _userCpf: string;
   private readonly _pacoteNome: string;
   private readonly _valorTotal: number;
   private readonly _metodoPagamento: PaymentMethod;
@@ -47,13 +53,16 @@ export class CreditTransaction {
   private constructor(props: CreditTransactionProps) {
     this._id = props.id || uuidv4();
     this._userId = props.userId;
+    this._userName = props.userName;
+    this._userEmail = props.userEmail;
+    this._userCpf = props.userCpf;
     this._pacoteNome = props.pacoteNome;
     this._valorTotal = props.valorTotal;
     this._metodoPagamento = props.metodoPagamento;
     this._status = props.status || 'PENDENTE';
     this._dataCriacao = props.dataCriacao || new Date();
     this._dataAtualizacao = props.dataAtualizacao || new Date();
-	this._telefone = props.telefone;
+    this._telefone = props.telefone;
     this._cep = props.cep;
     this._endereco = props.endereco;
     this._numero = props.numero;
@@ -61,7 +70,6 @@ export class CreditTransaction {
     this._bairro = props.bairro;
     this._cidade = props.cidade;
     this._estado = props.estado;
-
   }
 
   // Fabrica da Entidade (Factory Method)
@@ -69,6 +77,18 @@ export class CreditTransaction {
   public static create(props: CreditTransactionProps): CreditTransaction {
     if (!props.userId) {
       throw new Error('Uma transação de crédito precisa obrigatoriamente de um utilizador vinculado.');
+    }
+
+    if (!props.userName) {
+      throw new Error('O nome do comprador é obrigatório.');
+    }
+
+    if (!props.userEmail) {
+      throw new Error('O email do comprador é obrigatório.');
+    }
+
+    if (!props.userCpf || props.userCpf.length !== 11) {
+      throw new Error('O CPF do comprador deve conter exatamente 11 dígitos.');
     }
     
     if (props.valorTotal <= 0) {
@@ -81,6 +101,9 @@ export class CreditTransaction {
   // GETTERS: Permitem que as outras camadas (como o UseCase e o Prisma Adapter) leiam os dados
   public get id(): string { return this._id; }
   public get userId(): string { return this._userId; }
+  public get userName(): string { return this._userName; }
+  public get userEmail(): string { return this._userEmail; }
+  public get userCpf(): string { return this._userCpf; }
   public get pacoteNome(): string { return this._pacoteNome; }
   public get valorTotal(): number { return this._valorTotal; }
   public get metodoPagamento(): PaymentMethod { return this._metodoPagamento; }

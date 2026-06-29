@@ -1,6 +1,12 @@
+import { CreditTransaction } from "src/modules/credits/domain/entities/CreditTransaction";
+
 export const PaymentGatewayPortToken = Symbol('PaymentGatewayPort');
 
+export type PaymentGatewayResponse = {
+  paymentPayload: string;
+  paymentQrCodeBase64?: string;
+};
+
 export interface PaymentGatewayPort {
-  // Retorna o "Pix Copia e Cola" ou o Link do Checkout
-  generatePaymentDetails(transactionId: string, valor: number, metodo: string): Promise<string>;
+  generatePaymentDetails(transaction: CreditTransaction, valor: number, metodo: string, userEmail: string): Promise<PaymentGatewayResponse>;
 }
