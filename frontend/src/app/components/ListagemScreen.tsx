@@ -1,39 +1,53 @@
-import { useState, useEffect } from 'react';
-import { Shield, Plus, Download, FileText, Package } from 'lucide-react';
-import { api } from '../../services/api'
-
+import { useState, useEffect } from "react";
+import { Shield, Plus, Download, FileText, Package } from "lucide-react";
+import { api } from "../../services/api";
+import moment from 'moment';
 interface ListagemScreenProps {
   onNavigate: (screen: string) => void;
 }
 
-interface Registro {
+export interface Registro {
   id: string;
   titulo: string;
   dataInicio: string;
   dataFim: string;
-  status: 'Concluído' | 'Em Andamento' | 'Pausado';
+  status: "Concluído" | "Em Andamento" | "Pausado";
 }
 
 export function ListagemScreen({ onNavigate }: ListagemScreenProps) {
   const [registros, setRegistros] = useState<Registro[]>([]);
-  const [error, setError] = useState(''); // Estado de erro para a listagem
+  const [error, setError] = useState(""); // Estado de erro para a listagem
 
   useEffect(() => {
     const fetchRegistros = async () => {
       try {
-        setError('');
-        const token = localStorage.getItem('@Veridit:token');
-		const id = localStorage.getItem('@Veridit:id');
+        setError("");
+        const token = localStorage.getItem("@Veridit:token");
+        const id = localStorage.getItem("@Veridit:id");
         if (!token) {
-          onNavigate('login');
+          onNavigate("login");
           return;
         }
 
         const response = await api.get(`/audit/records/${id}`);
 
-        setRegistros(response.data);
+        setRegistros(
+          response.data.map((resData: any) => ({
+            id: resData.id,
+            titulo: resData.title,
+            siteUrl: resData.siteUrl,
+            status: resData.status,
+            dataInicio: moment(resData.startTime).format("DD/MM/YYYY H:m:s"),
+            dataFim: moment(resData.endTime).format("DD/MM/YYYY H:m:s"),
+            imageCount: resData.imageCount,
+            videoCount: resData.videoCount,
+            detalhes: resData.details,
+          })),
+        );
       } catch (err: any) {
-        setError('Não foi possível carregar o histórico de sincronização ou sua sessão expirou.');
+        setError(
+          "Não foi possível carregar o histórico de sincronização ou sua sessão expirou.",
+        );
         console.error(err);
       }
     };
@@ -42,20 +56,20 @@ export function ListagemScreen({ onNavigate }: ListagemScreenProps) {
   }, [onNavigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('@Veridit:token');
-    onNavigate('login');
+    localStorage.removeItem("@Veridit:token");
+    onNavigate("login");
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Concluído':
-        return 'bg-success/10 text-success border-success/20';
-      case 'Em Andamento':
-        return 'bg-warning/10 text-warning border-warning/20';
-      case 'Pausado':
-        return 'bg-muted text-muted-foreground border-border';
+      case "COMPLETED":
+        return "bg-success/10 text-success border-success/20";
+      case "FAILED":
+        return "bg-warning/10 text-warning border-warning/20";
+      case "PENDING":
+        return "bg-muted text-muted-foreground border-border";
       default:
-        return 'bg-muted text-muted-foreground border-border';
+        return "bg-muted text-muted-foreground border-border";
     }
   };
 
@@ -70,13 +84,15 @@ export function ListagemScreen({ onNavigate }: ListagemScreenProps) {
               </div>
               <div>
                 <h1 className="text-foreground">Veridit</h1>
-                <p className="text-muted-foreground">Sistema de Captura de Provas Digitais</p>
+                <p className="text-muted-foreground">
+                  Sistema de Captura de Provas Digitais
+                </p>
               </div>
             </div>
 
             <nav className="flex items-center gap-4">
               <button
-                onClick={() => onNavigate('comprar-creditos')}
+                onClick={() => onNavigate("comprar-creditos")}
                 className="text-foreground hover:text-primary transition-colors"
               >
                 Comprar Créditos
@@ -102,7 +118,7 @@ export function ListagemScreen({ onNavigate }: ListagemScreenProps) {
           </div>
 
           <button
-            onClick={() => onNavigate('iniciar-registro')}
+            onClick={() => onNavigate("iniciar-registro")}
             className="flex items-center gap-2 bg-primary text-primary-foreground py-3 px-6 rounded-lg hover:opacity-90 transition-all"
           >
             <Plus className="w-5 h-5" />
@@ -122,10 +138,18 @@ export function ListagemScreen({ onNavigate }: ListagemScreenProps) {
             <table className="w-full">
               <thead>
                 <tr className="bg-secondary border-b border-border">
-                  <th className="px-6 py-4 text-left text-foreground">Título</th>
-                  <th className="px-6 py-4 text-left text-foreground">Data Início</th>
-                  <th className="px-6 py-4 text-left text-foreground">Data Fim</th>
-                  <th className="px-6 py-4 text-left text-foreground">Status</th>
+                  <th className="px-6 py-4 text-left text-foreground">
+                    Título
+                  </th>
+                  <th className="px-6 py-4 text-left text-foreground">
+                    Data Início
+                  </th>
+                  <th className="px-6 py-4 text-left text-foreground">
+                    Data Fim
+                  </th>
+                  <th className="px-6 py-4 text-left text-foreground">
+                    Status
+                  </th>
                   <th className="px-6 py-4 text-left text-foreground">Ações</th>
                 </tr>
               </thead>
@@ -139,15 +163,19 @@ export function ListagemScreen({ onNavigate }: ListagemScreenProps) {
                       <span className="text-foreground">{registro.titulo}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-muted-foreground">{registro.dataInicio}</span>
+                      <span className="text-muted-foreground">
+                        {registro.dataInicio}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-muted-foreground">{registro.dataFim}</span>
+                      <span className="text-muted-foreground">
+                        {registro.dataFim}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center px-3 py-1 rounded-full border ${getStatusColor(
-                          registro.status
+                          registro.status,
                         )}`}
                       >
                         {registro.status}
@@ -156,7 +184,13 @@ export function ListagemScreen({ onNavigate }: ListagemScreenProps) {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => onNavigate('detalhes')}
+                          onClick={() => {
+                            localStorage.setItem(
+                              "@Veridit:record_id",
+                              registro.id,
+                            );
+                            onNavigate("detalhes");
+                          }}
                           className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-all"
                           title="Ver Detalhes"
                         >
@@ -189,7 +223,7 @@ export function ListagemScreen({ onNavigate }: ListagemScreenProps) {
                 Você ainda não possui registros
               </p>
               <button
-                onClick={() => onNavigate('iniciar-registro')}
+                onClick={() => onNavigate("iniciar-registro")}
                 className="inline-flex items-center gap-2 bg-primary text-primary-foreground py-2 px-4 rounded-lg hover:opacity-90 transition-all"
               >
                 <Plus className="w-4 h-4" />

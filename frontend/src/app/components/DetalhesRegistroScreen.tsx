@@ -1,7 +1,33 @@
-import { Shield, FileText, Package, ArrowLeft, Calendar, Clock, User, Link as LinkIcon, HardDrive, Film } from 'lucide-react';
+import {
+  Shield,
+  FileText,
+  Package,
+  ArrowLeft,
+  Calendar,
+  Clock,
+  User,
+  Link as LinkIcon,
+  HardDrive,
+  Film,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { api } from "../../services/api";
+import moment from "moment/min/moment-with-locales";
 
 interface DetalhesRegistroScreenProps {
   onNavigate: (screen: string) => void;
+}
+
+interface Registro {
+  id: string;
+  titulo: string;
+  siteUrl: string;
+  status: string;
+  dataInicio: string;
+  dataFim: string;
+  imageCount: number;
+  videoCount: number;
+  detalhes: string;
 }
 
 interface DataField {
@@ -10,14 +36,72 @@ interface DataField {
   icon?: React.ReactNode;
 }
 
-export function DetalhesRegistroScreen({ onNavigate }: DetalhesRegistroScreenProps) {
+export function DetalhesRegistroScreen({
+  onNavigate,
+}: DetalhesRegistroScreenProps) {
   const handleDownloadPDF = () => {
-    alert('Gerando relatório PDF com certificado de autenticidade...');
+    alert("Gerando relatório PDF com certificado de autenticidade...");
   };
 
   const handleDownloadZIP = () => {
-    alert('Preparando arquivo ZIP com todas as evidências...');
+    alert("Preparando arquivo ZIP com todas as evidências...");
   };
+
+  const [registro, setRegistro] = useState<Registro>();
+  const [tipoMidias, setTiposMidias] = useState<string>("");
+  const [duracao, setDuracao] = useState<moment.Duration>();
+
+  useEffect(() => {}, [registro]);
+
+  useEffect(() => {
+    const fetchRegistros = async () => {
+      const token = localStorage.getItem("@Veridit:token");
+      const id = localStorage.getItem("@Veridit:record_id");
+      if (!token) {
+        onNavigate("login");
+        return;
+      }
+
+      api
+        .get(`/audit/records/details/${id}`)
+        .then((response) => {
+          const resData = response.data;
+
+          const momentInicio = moment(resData.startTime);
+          const momentFim = moment(resData.endTime);
+          setDuracao(
+            moment.duration(momentFim.diff(momentInicio), "milliseconds"),
+          );
+
+          const midiasCapturadas = [];
+          if (resData?.imageCount)
+            midiasCapturadas.push(`${resData.imageCount} imagens`);
+
+          if (resData?.videoCount)
+            midiasCapturadas.push(`${resData.videoCount} vídeos`);
+
+          setTiposMidias(midiasCapturadas.join("; "));
+
+          setRegistro({
+            id: resData.id,
+            titulo: resData.title,
+            siteUrl: resData.siteUrl,
+            status: resData.status,
+            dataInicio: momentInicio.format("DD/MM/YYYY H:m:s"),
+            dataFim: momentFim.format("DD/MM/YYYY H:m:s"),
+            imageCount: resData.imageCount,
+            videoCount: resData.videoCount,
+            detalhes: resData.details,
+          });
+        })
+        .catch((err: any) => {
+          onNavigate("listagem");
+          console.error(err);
+        });
+    };
+
+    fetchRegistros();
+  }, [onNavigate]);
 
   return (
     <div className="min-h-screen bg-secondary">
@@ -30,7 +114,9 @@ export function DetalhesRegistroScreen({ onNavigate }: DetalhesRegistroScreenPro
             </div>
             <div>
               <h1 className="text-foreground">Veridit</h1>
-              <p className="text-muted-foreground">Sistema de Captura de Provas Digitais</p>
+              <p className="text-muted-foreground">
+                Sistema de Captura de Provas Digitais
+              </p>
             </div>
           </div>
         </div>
@@ -39,7 +125,7 @@ export function DetalhesRegistroScreen({ onNavigate }: DetalhesRegistroScreenPro
       <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Botão Voltar */}
         <button
-          onClick={() => onNavigate('listagem')}
+          onClick={() => onNavigate("listagem")}
           className="flex items-center gap-2 text-primary hover:opacity-80 mb-6 transition-all"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -82,27 +168,27 @@ export function DetalhesRegistroScreen({ onNavigate }: DetalhesRegistroScreenPro
             <div className="space-y-5">
               <DataFieldDisplay
                 label="ID gerado pelo sistema"
-                value="#VRD-98273-2026"
+                value={registro?.id ?? ""}
                 icon={<Shield className="w-4 h-4 text-primary" />}
               />
               <DataFieldDisplay
                 label="Título"
-                value="Fraude no E-commerce XYZ"
+                value={registro?.titulo ?? ""}
                 icon={<FileText className="w-4 h-4 text-primary" />}
               />
               <DataFieldDisplay
                 label="Data/hora início"
-                value="20/04/2026 14:30:00"
+                value={registro?.dataInicio ?? ""}
                 icon={<Calendar className="w-4 h-4 text-primary" />}
               />
               <DataFieldDisplay
                 label="Data/hora fim"
-                value="20/04/2026 14:45:12"
+                value={registro?.dataFim ?? ""}
                 icon={<Calendar className="w-4 h-4 text-primary" />}
               />
               <DataFieldDisplay
                 label="Duração"
-                value="15 minutos e 12 segundos"
+                value={duracao?.locale("pt").humanize() ?? ""}
                 icon={<Clock className="w-4 h-4 text-primary" />}
               />
             </div>
@@ -137,17 +223,17 @@ export function DetalhesRegistroScreen({ onNavigate }: DetalhesRegistroScreenPro
             <div className="space-y-5">
               <DataFieldDisplay
                 label="URL do site navegado"
-                value="https://www.site-alvo.com.br/produto"
+                value={registro?.siteUrl ?? ""}
                 icon={<LinkIcon className="w-4 h-4 text-primary" />}
               />
               <DataFieldDisplay
                 label="Tipos de dados registrados"
-                value="Gravação de Navegação (Vídeo) e Captura de Tela"
+                value={tipoMidias ?? ""}
                 icon={<Film className="w-4 h-4 text-primary" />}
               />
               <DataFieldDisplay
                 label="Informações dos dados"
-                value="12 imagens capturadas, 1 vídeo"
+                value={registro?.detalhes ?? ""}
                 icon={<Film className="w-4 h-4 text-primary" />}
               />
             </div>
@@ -175,8 +261,9 @@ export function DetalhesRegistroScreen({ onNavigate }: DetalhesRegistroScreenPro
             <div>
               <h4 className="text-foreground mb-2">Evidência Autenticada</h4>
               <p className="text-muted-foreground">
-                Este registro foi capturado e armazenado com criptografia de ponta a ponta.
-                Todos os metadados foram validados e assinados digitalmente com certificado SHA-256.
+                Este registro foi capturado e armazenado com criptografia de
+                ponta a ponta. Todos os metadados foram validados e assinados
+                digitalmente com certificado SHA-256.
               </p>
               <div className="mt-4 grid md:grid-cols-2 gap-4 text-sm">
                 <div>
@@ -186,7 +273,9 @@ export function DetalhesRegistroScreen({ onNavigate }: DetalhesRegistroScreenPro
                   </p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Timestamp Blockchain:</span>
+                  <span className="text-muted-foreground">
+                    Timestamp Blockchain:
+                  </span>
                   <p className="text-foreground font-mono mt-1">
                     2026-04-20T14:45:12.000Z
                   </p>
@@ -200,9 +289,11 @@ export function DetalhesRegistroScreen({ onNavigate }: DetalhesRegistroScreenPro
         <div className="bg-secondary border border-border rounded-lg p-6">
           <h4 className="text-foreground mb-3">Validade Jurídica</h4>
           <p className="text-muted-foreground mb-4">
-            Este documento possui validade jurídica conforme a Lei nº 13.709/2018 (LGPD)
-            e pode ser utilizado como prova digital em processos judiciais e administrativos.
-            A autenticidade dos dados pode ser verificada através do certificado digital incluído no relatório PDF.
+            Este documento possui validade jurídica conforme a Lei nº
+            13.709/2018 (LGPD) e pode ser utilizado como prova digital em
+            processos judiciais e administrativos. A autenticidade dos dados
+            pode ser verificada através do certificado digital incluído no
+            relatório PDF.
           </p>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Shield className="w-4 h-4" />
@@ -223,11 +314,7 @@ interface DataFieldDisplayProps {
 function DataFieldDisplay({ label, value, icon }: DataFieldDisplayProps) {
   return (
     <div className="flex gap-3">
-      {icon && (
-        <div className="flex-shrink-0 mt-1">
-          {icon}
-        </div>
-      )}
+      {icon && <div className="flex-shrink-0 mt-1">{icon}</div>}
       <div className="flex-1 min-w-0">
         <p className="text-muted-foreground mb-1">{label}</p>
         <p className="text-foreground break-words">{value}</p>
