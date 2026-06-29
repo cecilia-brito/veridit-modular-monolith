@@ -6,7 +6,7 @@ import { MockCreditTransactionRepository } from './infrastructure/adapters/outbo
 import { CreditTransactionRepositoryPortToken } from './application/ports/out/CreditTransactionRepositoryPort';
 import { MockPaymentGateway } from './infrastructure/adapters/outbound/MockPaymentGateway';
 import { PaymentGatewayPortToken } from './application/ports/out/PaymentGatewayPort';
-import { MockEmailService } from './infrastructure/adapters/outbound/MockEmailService';
+import { EmailServiceAdapter } from './infrastructure/adapters/outbound/EmailServiceAdapter';
 import { EmailServicePortToken } from './application/ports/out/EmailServicePort';
 import { CreditEmailListener } from './infrastructure/adapters/inbound/events/CreditEmailListener';
 
@@ -16,7 +16,7 @@ import { CreditEmailListener } from './infrastructure/adapters/inbound/events/Cr
     { provide: BuyCreditsUseCaseToken, useClass: BuyCreditsService },
     { provide: CreditTransactionRepositoryPortToken, useClass: MockCreditTransactionRepository },
     { provide: PaymentGatewayPortToken, useClass: MockPaymentGateway },
-    { provide: EmailServicePortToken, useClass: MockEmailService },
+    { provide: EmailServicePortToken, useClass: EmailServiceAdapter },
     CreditEmailListener,
   ],
 })

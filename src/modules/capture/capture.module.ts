@@ -5,7 +5,7 @@ import { StartCaptureUseCaseToken } from './application/ports/in/StartCaptureUse
 import { PrismaCaptureRepository } from './infrastructure/adapters/outbound/PrismaCapture.repository';
 import { CaptureRepositoryPortToken } from './application/ports/out/CaptureRepositoryPort';
 import { CaptureNotificationPortToken } from './application/ports/out/CaptureNotificationPort';
-import { MockCaptureNotificationService } from './infrastructure/adapters/outbound/MockCaptureNotificationService';
+import { CaptureNotificationAdapter } from './infrastructure/adapters/outbound/CaptureNotificationAdapter';
 import { CaptureNotificationListener } from './infrastructure/adapters/inbound/events/CaptureNotificationListener';
 import { MockCaptureWorker } from './infrastructure/adapters/inbound/events/MockCaptureWorker';
 
@@ -22,7 +22,7 @@ import { MockCaptureWorker } from './infrastructure/adapters/inbound/events/Mock
     },
     {
       provide: CaptureNotificationPortToken,
-      useClass: MockCaptureNotificationService,
+      useClass: CaptureNotificationAdapter,
     },
     CaptureNotificationListener,
     MockCaptureWorker,
