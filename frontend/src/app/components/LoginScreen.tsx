@@ -25,7 +25,7 @@ export function LoginScreen({ onNavigate }: LoginScreenProps) {
         password,
       });
 
-      localStorage.setItem('@Veridit:token', response.data.access_token);
+      localStorage.setItem('@Veridit:token', response.data.accessToken);
 	  localStorage.setItem('@Veridit:id', response.data.userId);
       onNavigate('listagem');
     } catch (err: any) {
