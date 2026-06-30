@@ -1,45 +1,47 @@
-import { useState } from 'react';
-import { Shield, ArrowLeft } from 'lucide-react';
-import { api } from '../../services/api'
+import { useState } from "react";
+import { Shield, ArrowLeft } from "lucide-react";
+import { api } from "../../services/api";
 
 interface CadastroScreenProps {
   onNavigate: (screen: string) => void;
 }
 
 export function CadastroScreen({ onNavigate }: CadastroScreenProps) {
-  const [tipoUsuario, setTipoUsuario] = useState('Usuário Comum');
-  const [nomeCompleto, setNomeCompleto] = useState('');
-  const [cpf, setCpf] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [numeroOAB, setNumeroOAB] = useState('');
-  const [error, setError] = useState('');
+  const [tipoUsuario, setTipoUsuario] = useState("Usuário Comum");
+  const [nomeCompleto, setNomeCompleto] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [numeroOAB, setNumeroOAB] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(''); 
-    
-    try {
-      await api.post('/users/register', {
+    setError("");
+
+    api
+      .post("/users/register", {
         fullName: nomeCompleto,
         email: email,
         password: senha,
         cpf: cpf,
-        role: tipoUsuario === 'Advogado' ? 'LAWYER' : 'COMMON',
+        role: tipoUsuario === "Advogado" ? "LAWYER" : "COMMON",
         oabNumber: numeroOAB || undefined,
-      });
-
-      onNavigate('login');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao realizar o cadastro. Tente novamente.');
-    }
+      })
+      .then(() => onNavigate("login"))
+      .catch((err: any) =>
+        setError(
+          err.response?.data?.message ||
+            "Erro ao realizar o cadastro. Tente novamente.",
+        ),
+      );
   };
 
   return (
     <div className="min-h-screen bg-secondary p-6">
       <div className="max-w-2xl mx-auto">
         <button
-          onClick={() => onNavigate('login')}
+          onClick={() => onNavigate("login")}
           className="flex items-center gap-2 text-primary hover:opacity-80 mb-6 transition-all"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -51,7 +53,9 @@ export function CadastroScreen({ onNavigate }: CadastroScreenProps) {
             <Shield className="w-8 h-8 text-primary-foreground" />
           </div>
           <h1 className="text-foreground mb-2">Criar Conta</h1>
-          <p className="text-muted-foreground">Preencha os dados para começar</p>
+          <p className="text-muted-foreground">
+            Preencha os dados para começar
+          </p>
         </div>
 
         <div className="bg-card rounded-lg shadow-sm border border-border p-8">
@@ -109,7 +113,10 @@ export function CadastroScreen({ onNavigate }: CadastroScreenProps) {
             </div>
 
             <div>
-              <label htmlFor="email-cadastro" className="block text-foreground mb-2">
+              <label
+                htmlFor="email-cadastro"
+                className="block text-foreground mb-2"
+              >
                 E-mail
               </label>
               <input
@@ -124,7 +131,10 @@ export function CadastroScreen({ onNavigate }: CadastroScreenProps) {
             </div>
 
             <div>
-              <label htmlFor="senha-cadastro" className="block text-foreground mb-2">
+              <label
+                htmlFor="senha-cadastro"
+                className="block text-foreground mb-2"
+              >
                 Senha
               </label>
               <input
@@ -138,7 +148,7 @@ export function CadastroScreen({ onNavigate }: CadastroScreenProps) {
               />
             </div>
 
-            {tipoUsuario === 'Advogado' && (
+            {tipoUsuario === "Advogado" && (
               <div>
                 <label htmlFor="oab" className="block text-foreground mb-2">
                   Número da OAB
@@ -150,7 +160,7 @@ export function CadastroScreen({ onNavigate }: CadastroScreenProps) {
                   onChange={(e) => setNumeroOAB(e.target.value)}
                   placeholder="Ex: 123456/SP"
                   className="w-full px-4 py-3 bg-input-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-                  required={tipoUsuario === 'Advogado'}
+                  required={tipoUsuario === "Advogado"}
                 />
               </div>
             )}

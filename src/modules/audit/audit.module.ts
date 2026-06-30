@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuditController } from './infrastructure/adapters/inbound/AuditController';
-import { ListRecordsUseCaseToken } from './application/ports/in/ListRecordsUseCase';
-import { ListRecordsService } from './application/usecases/ListRecordsService';
+import { RecordsUseCaseToken } from './application/ports/in/RecordsUseCase';
+import { RecordsService } from './application/usecases/RecordsService';
 import { RecordRepositoryPortToken } from './application/ports/out/RecordRepositoryPort';
 import { PrismaRecordRepository } from './infrastructure/adapters/outbound/PrismaRecordRepository';
 
@@ -9,8 +9,8 @@ import { PrismaRecordRepository } from './infrastructure/adapters/outbound/Prism
   controllers: [AuditController],
   providers: [
     {
-      provide: ListRecordsUseCaseToken,
-      useClass: ListRecordsService,
+      provide: RecordsUseCaseToken,
+      useClass: RecordsService,
     },
     {
       provide: RecordRepositoryPortToken,
@@ -18,4 +18,4 @@ import { PrismaRecordRepository } from './infrastructure/adapters/outbound/Prism
     },
   ],
 })
-export class AuditModule {}
+export class AuditModule { }
