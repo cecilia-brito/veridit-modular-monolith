@@ -8,7 +8,7 @@ import { PrismaService } from 'src/modules/prisma/prisma.service';
 
 @Injectable()
 export class PrismaUserRepository implements UserRepositoryPort {
-	constructor(private readonly prisma: PrismaService) {}
+	constructor(private readonly prisma: PrismaService) { }
 
 	public async save(user: User): Promise<void> {
 		await this.prisma.user.upsert({
@@ -38,7 +38,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
 		});
 		console.log(`[Repository] Usuário salvo no banco: ${user.fullName} (${user.id})`);
 	}
-	
+
 	public async findByEmail(email: string): Promise<User | null> {
 		const rawData = await this.prisma.user.findUnique({
 			where: { email },
@@ -46,7 +46,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
 		if (!rawData) return null;
 		return this.mapToDomain(rawData);
 	}
-	
+
 	public async findById(id: string): Promise<User | null> {
 		const rawData = await this.prisma.user.findUnique({
 			where: { id },
@@ -54,7 +54,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
 		if (!rawData) return null;
 		return this.mapToDomain(rawData);
 	}
-	
+
 	public async findByCpf(cpf: string): Promise<User | null> {
 		const rawData = await this.prisma.user.findUnique({
 			where: { cpf },
@@ -62,7 +62,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
 		if (!rawData) return null;
 		return this.mapToDomain(rawData);
 	}
-	
+
 	private mapToDomain(rawData: any): User {
 		const user = User.create(
 			{
