@@ -8,6 +8,7 @@ import { CaptureModule } from './modules/capture/capture.module';
 import { EmailModule } from './shared/infrastructure/email/email.module';
 import { PdfUseCaseToken } from './shared/application/ports/in/PdfUseCase';
 import { PdfService } from './shared/application/usecases/PdfService';
+import { PrismaModule } from './modules/prisma/prisma.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { PdfService } from './shared/application/usecases/PdfService';
     AuditModule,
     CreditsModule,
     CaptureModule,
+    PrismaModule,
     ConfigModule.forRoot({
       isGlobal: true,  // Makes it available everywhere
       envFilePath: '.env'
