@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { CreditsController } from './infrastructure/adapters/inbound/CreditsController';
+import { WebhookController } from './infrastructure/adapters/inbound/WebhookController';
 import { BuyCreditsService } from './application/usecases/BuyCreditsService';
+import { ProcessPaymentNotificationService } from './application/usecases/ProcessPaymentNotificationService';
 import { BuyCreditsUseCaseToken } from './application/ports/in/BuyCreditsUseCase';
+import { ProcessPaymentNotificationUseCaseToken } from './application/ports/in/ProcessPaymentNotificationUseCase';
 import { MockCreditTransactionRepository } from './infrastructure/adapters/outbound/MockCreditTransactionRepository';
 import { CreditTransactionRepositoryPortToken } from './application/ports/out/CreditTransactionRepositoryPort';
 import { MercadoPagoPaymentPix, MercadoPagoOrderToken } from './infrastructure/adapters/outbound/MercadoPagoPaymentPix';
@@ -11,9 +14,10 @@ import { EmailServicePortToken } from './application/ports/out/EmailServicePort'
 import MercadoPagoConfig, { Order } from 'mercadopago';
 
 @Module({
-  controllers: [CreditsController],
+  controllers: [CreditsController, WebhookController],
   providers: [
     { provide: BuyCreditsUseCaseToken, useClass: BuyCreditsService },
+    { provide: ProcessPaymentNotificationUseCaseToken, useClass: ProcessPaymentNotificationService },
     { provide: CreditTransactionRepositoryPortToken, useClass: MockCreditTransactionRepository },
     {
       provide: MercadoPagoOrderToken,

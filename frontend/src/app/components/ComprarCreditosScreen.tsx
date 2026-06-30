@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, CreditCard, Copy, Check } from 'lucide-react';
 import { api } from '../../services/api'; // O nosso serviço Axios configurado com o interceptador JWT
 
@@ -24,6 +24,7 @@ export function ComprarCreditosScreen({ onNavigate }: ComprarCreditosScreenProps
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
   const [paymentResult, setPaymentResult] = useState<{ transactionId: string; payload: string; paymentQrCodeBase64?: string } | null>(null);
+  const [paymentStatus, setPaymentStatus] = useState<'PENDENTE' | 'PAGO' | 'FALHOU' | null>(null);
   const [copied, setCopied] = useState(false);
 
   const pacotes = {
@@ -70,6 +71,24 @@ export function ComprarCreditosScreen({ onNavigate }: ComprarCreditosScreenProps
     }
   };
 
+  useEffect(() => {
+    if (!paymentResult) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await api.get(`/credits/${paymentResult.transactionId}/status`);
+        if (res.data.status === 'PAGO' || res.data.status === 'FALHOU') {
+          setPaymentStatus(res.data.status);
+          clearInterval(interval);
+        }
+      } catch {
+        // ignorar erros de polling
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [paymentResult]);
+
   const handleCopyToken = () => {
     if (paymentResult) {
       navigator.clipboard.writeText(paymentResult.payload);
@@ -104,14 +123,52 @@ export function ComprarCreditosScreen({ onNavigate }: ComprarCreditosScreenProps
           </div>
         )}
 
+        {/* FEEDBACK VISUAL DE CONFIRMAÇÃO */}
+        {paymentStatus === 'PAGO' && (
+          <div className="bg-card border-2 border-success rounded-lg p-8 mb-8 shadow-sm text-center">
+            <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center mx-auto mb-4">
+              <Check className="w-8 h-8 text-white" />
+            </div>
+            <h3 className="text-success text-xl font-semibold mb-2">Pagamento Confirmado!</h3>
+            <p className="text-muted-foreground mb-4">
+              Pedido # {paymentResult?.transactionId.substring(0, 8)}
+            </p>
+            <p className="text-muted-foreground mb-6">
+              Seus créditos já estão disponíveis. Obrigado pela compra!
+            </p>
+            <button
+              onClick={() => onNavigate('listagem')}
+              className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium hover:opacity-90"
+            >
+              Ir para Listagem
+            </button>
+          </div>
+        )}
+
+        {paymentStatus === 'FALHOU' && (
+          <div className="bg-card border-2 border-destructive rounded-lg p-8 mb-8 shadow-sm text-center">
+            <h3 className="text-destructive text-xl font-semibold mb-2">Pagamento não confirmado</h3>
+            <p className="text-muted-foreground mb-6">
+              O pagamento do pedido # {paymentResult?.transactionId.substring(0, 8)} não foi concluído. Entre em contato com o suporte.
+            </p>
+            <button
+              onClick={() => onNavigate('listagem')}
+              className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium hover:opacity-90"
+            >
+              Voltar
+            </button>
+          </div>
+        )}
+
         {/* FEEDBACK VISUAL DE SUCESSO: EXIBIÇÃO DO PAGAMENTO GERADO */}
-        {paymentResult && (
+        {paymentResult && !paymentStatus && (
           <div className="bg-card border-2 border-success rounded-lg p-6 mb-8 shadow-sm">
             <h3 className="text-success flex items-center gap-2 mb-2 font-semibold">
               ✓ Pedido # {paymentResult.transactionId.substring(0, 8)} Gerado com Sucesso!
             </h3>
             <p className="text-muted-foreground mb-4 text-sm">
               Um e-mail de confirmação foi enviado para a sua conta através de um processo em background.
+              Após o pagamento, esta tela será atualizada automaticamente.
             </p>
             
             {metodoPagamento === 'Pix' ? (
