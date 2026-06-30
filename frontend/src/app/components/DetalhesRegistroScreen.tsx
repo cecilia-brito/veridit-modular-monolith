@@ -40,7 +40,23 @@ export function DetalhesRegistroScreen({
   onNavigate,
 }: DetalhesRegistroScreenProps) {
   const handleDownloadPDF = () => {
-    alert("Gerando relatório PDF com certificado de autenticidade...");
+    api.put(`audit/records/report/${registro?.id}`, {}, {responseType: 'blob'})
+    .then((res) => {
+      console.log('Chegou')
+      const blob = new Blob([res.data]);
+      const url = window.URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${registro?.id}-report.pdf`);
+      document.body.appendChild(link);
+      
+      link.click();
+      
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    })
+    .catch(console.log);
   };
 
   const handleDownloadZIP = () => {
