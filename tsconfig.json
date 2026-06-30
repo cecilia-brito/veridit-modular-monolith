@@ -18,5 +18,5 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true
   },
-  "exclude": ["dist", "frontend"]
+  "exclude": ["dist", "frontend", "*.ts"]
 }
