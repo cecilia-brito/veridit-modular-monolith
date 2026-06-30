@@ -3,7 +3,7 @@ import { SharedEmailService } from '../../../../../shared/infrastructure/email/S
 import { MailerPort } from '../../../application/ports/out/MailerPort';
 
 @Injectable()
-export class NestMailerAdapter implements MailerPort {
+export class MailtrapAdapter implements MailerPort {
   constructor(private readonly emailService: SharedEmailService) {}
 
   public async sendEmail(to: string, subject: string, body: string): Promise<void> {

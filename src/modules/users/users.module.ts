@@ -11,7 +11,7 @@ import { LogoutService } from './application/usecases/LogoutService';
 import { UserRepositoryPortToken } from './application/ports/out/UserRepositoryPort';
 import { PrismaUserRepository } from './infrastructure/adapters/outbound/PrismaUserRepository';
 import { MailerPortToken } from './application/ports/out/MailerPort';
-import { NestMailerAdapter } from './infrastructure/adapters/outbound/NestMailerAdapter';
+import { MailtrapAdapter } from './infrastructure/adapters/outbound/MailtrapAdapter';
 import { AuthModule } from 'src/shared/infrastructure/auth/auth.module';
 //import { PrismaModule } from '../prisma/prisma.module';
 
@@ -41,7 +41,7 @@ import { AuthModule } from 'src/shared/infrastructure/auth/auth.module';
     },
     {
       provide: MailerPortToken,
-      useClass: NestMailerAdapter,
+      useClass: MailtrapAdapter,
     },
   ],
   exports: [

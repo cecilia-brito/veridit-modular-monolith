@@ -37,8 +37,8 @@ export class UsersController {
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   @Post('recover-password')
-  public async recoverPassword(@Body() body: { email: string; newPassword: string }) {
-    const result = await this.recoverPasswordUseCase.recoverPassword(body.email, body.newPassword);
+  public async recoverPassword(@Body() body: { email: string }) {
+    const result = await this.recoverPasswordUseCase.recoverPassword(body.email);
     return result;
   }
 
