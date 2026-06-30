@@ -25,10 +25,12 @@ export class MockCaptureWorker {
         await this.captureRepo.update(session);
         console.log(`[MOCK WORKER] ✅ Gravação ${payload.captureId} concluída com sucesso!`);
         
-        // 3. Dispara evento de conclusão para notificação por e-mail (REQ 10)
+        // 3. Dispara evento de conclusão para notificação por e-mail e geração de relatório
         this.eventEmitter.emit('capture.finished', { 
           captureId: session.id, 
-          userId: session.userId 
+          userId: session.userId,
+          titulo: session.titulo,
+          siteUrl: session.siteUrl
         });
       } else {
         console.warn(`[MOCK WORKER] ⚠️ Sessão não encontrada ou não pertence ao usuário.`);

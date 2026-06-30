@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Shield, ArrowLeft } from 'lucide-react';
+import { api } from '../../services/api';
 
 interface IniciarRegistroScreenProps {
   onNavigate: (screen: string) => void;
@@ -10,9 +11,25 @@ export function IniciarRegistroScreen({ onNavigate }: IniciarRegistroScreenProps
   const [titulo, setTitulo] = useState('');
   const [tipoCaptura, setTipoCaptura] = useState('Captura de Tela (Imagem)');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onNavigate('captura');
+    setLoading(true);
+    setError('');
+
+    try {
+      await api.post('/captures/start', {
+        titulo,
+        siteUrl: url,
+      });
+      onNavigate('captura');
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Falha ao iniciar a captura.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -33,6 +50,12 @@ export function IniciarRegistroScreen({ onNavigate }: IniciarRegistroScreenProps
           <h1 className="text-foreground mb-2">Iniciar Novo Registro</h1>
           <p className="text-muted-foreground">Configure os parâmetros da captura</p>
         </div>
+
+        {error && (
+          <div className="mb-6 p-4 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg text-center">
+            {error}
+          </div>
+        )}
 
         <div className="bg-card rounded-lg shadow-sm border border-border p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -120,9 +143,10 @@ export function IniciarRegistroScreen({ onNavigate }: IniciarRegistroScreenProps
               </button>
               <button
                 type="submit"
-                className="flex-1 bg-primary text-primary-foreground py-3 px-4 rounded-lg hover:opacity-90 transition-all"
+                disabled={loading}
+                className="flex-1 bg-primary text-primary-foreground py-3 px-4 rounded-lg hover:opacity-90 transition-all disabled:opacity-50"
               >
-                Iniciar Captura
+                {loading ? 'Iniciando...' : 'Iniciar Captura'}
               </button>
             </div>
           </form>

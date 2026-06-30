@@ -36,7 +36,7 @@ export function ListagemScreen({ onNavigate }: ListagemScreenProps) {
             id: resData.id,
             titulo: resData.title,
             siteUrl: resData.siteUrl,
-            status: resData.status,
+            status: resData.status === 'COMPLETED' ? 'Concluído' : resData.status === 'PENDING' ? 'Em Andamento' : 'Pausado',
             dataInicio: moment(resData.startTime).format("DD/MM/YYYY H:m:s"),
             dataFim: moment(resData.endTime).format("DD/MM/YYYY H:m:s"),
             imageCount: resData.imageCount,
@@ -62,11 +62,12 @@ export function ListagemScreen({ onNavigate }: ListagemScreenProps) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "COMPLETED":
+      case "Concluído":
         return "bg-success/10 text-success border-success/20";
-      case "FAILED":
+      case "Pausado":
+      case "Falhou":
         return "bg-warning/10 text-warning border-warning/20";
-      case "PENDING":
+      case "Em Andamento":
         return "bg-muted text-muted-foreground border-border";
       default:
         return "bg-muted text-muted-foreground border-border";

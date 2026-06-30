@@ -8,8 +8,10 @@ import { CaptureNotificationPortToken } from './application/ports/out/CaptureNot
 import { CaptureNotificationAdapter } from './infrastructure/adapters/outbound/CaptureNotificationAdapter';
 import { CaptureNotificationListener } from './infrastructure/adapters/inbound/events/CaptureNotificationListener';
 import { MockCaptureWorker } from './infrastructure/adapters/inbound/events/MockCaptureWorker';
+import { UsersModule } from '../users/users.module';
 
 @Module({
+  imports: [UsersModule],
   controllers: [CaptureController],
   providers: [
     {

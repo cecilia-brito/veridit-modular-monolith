@@ -17,7 +17,12 @@ export class StartCaptureService implements StartCaptureUseCase {
     await this.captureRepo.save(session);
     
     // Dispara o evento de solicitacao para o Worker assíncrono (ADR-004)
-    this.eventEmitter.emit('capture.requested', { captureId: session.id, userId: session.userId });
+    this.eventEmitter.emit('capture.requested', { 
+      captureId: session.id, 
+      userId: session.userId,
+      titulo: session.titulo,
+      siteUrl: session.siteUrl 
+    });
     
     return session.id;
   }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Shield } from 'lucide-react';
-import { api } from '../../services/api'; 
+import { api } from '../../services/api';
 
 interface LoginScreenProps {
   onNavigate: (screen: string) => void;
@@ -9,7 +9,7 @@ interface LoginScreenProps {
 export function LoginScreen({ onNavigate }: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(''); 
+  const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false); // Adicionado para bloquear múltiplos cliques
 
@@ -18,7 +18,7 @@ export function LoginScreen({ onNavigate }: LoginScreenProps) {
     setError('');
     setSuccess('');
     setLoading(true);
-    
+
     try {
       const response = await api.post('/users/login', {
         email,
@@ -26,7 +26,7 @@ export function LoginScreen({ onNavigate }: LoginScreenProps) {
       });
 
       localStorage.setItem('@Veridit:token', response.data.accessToken);
-	  localStorage.setItem('@Veridit:id', response.data.userId);
+      localStorage.setItem('@Veridit:id', response.data.userId);
       onNavigate('listagem');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Credenciais inválidas. Verifique seu e-mail e senha.');
@@ -38,12 +38,12 @@ export function LoginScreen({ onNavigate }: LoginScreenProps) {
   const handleRecoverPassword = async () => {
     setError('');
     setSuccess('');
-    
+
     if (!email) {
       setError('Por favor, digite seu e-mail corporativo antes de solicitar a recuperação.');
       return;
     }
-    
+
     try {
       setLoading(true);
       const response = await api.post('/users/recover-password', { email });
@@ -54,8 +54,8 @@ export function LoginScreen({ onNavigate }: LoginScreenProps) {
       console.log('Resposta do Servidor:', response.data);
       console.log('%c=========================================', 'color: #00ff00; font-weight: bold;');
 
-      setSuccess('Se o e-mail existir, um link de recuperação foi enviado. Verifique sua caixa de entrada.');
-      
+      setSuccess('Um link de recuperação foi enviado. Verifique sua caixa de entrada.');
+
     } catch (err: any) {
       setError(err.response?.data?.message || 'Erro ao tentar recuperar a senha.');
       console.error('Falha na recuperação:', err);

@@ -8,6 +8,8 @@ import { PdfUseCaseToken } from '../../shared/application/ports/in/PdfUseCase';
 import { PdfService } from '../../shared/application/usecases/PdfService';
 import { UserRepositoryPortToken } from '../users/application/ports/out/UserRepositoryPort';
 import { PrismaUserRepository } from '../users/infrastructure/adapters/outbound/PrismaUserRepository';
+import { CaptureFinishedAuditListener } from './infrastructure/adapters/inbound/events/CaptureFinishedAuditListener';
+import { CaptureRequestedAuditListener } from './infrastructure/adapters/inbound/events/CaptureRequestedAuditListener';
 
 @Module({
   controllers: [AuditController],
@@ -27,7 +29,9 @@ import { PrismaUserRepository } from '../users/infrastructure/adapters/outbound/
     {
       provide: PdfUseCaseToken,
       useClass: PdfService,
-    }
+    },
+    CaptureFinishedAuditListener,
+    CaptureRequestedAuditListener
   ],
 })
 export class AuditModule { }
