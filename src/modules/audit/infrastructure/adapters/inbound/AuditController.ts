@@ -1,6 +1,7 @@
-import { Controller, Get, Param, Inject, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Inject, HttpCode, HttpStatus, UseGuards, Put, Post, Res, Header, StreamableFile } from '@nestjs/common';
 import { RecordsUseCase, RecordsUseCaseToken } from '../../../application/ports/in/RecordsUseCase';
-import { JwtAuthGuard } from 'src/shared/infrastructure/auth/jwt-auth.guard';
+import { createReadStream } from 'fs';
+import { join } from 'path';
 
 @Controller('audit')
 export class AuditController {
@@ -45,5 +46,15 @@ export class AuditController {
       videoCount: record.videoCount,
       details: record.details,
     };
+  }
+
+  @Put('records/report/:recordId')
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'attachment; filename="output.pdf"')
+  @HttpCode(HttpStatus.CREATED)
+  async generatePdf(@Param('recordId') recordId: string) {
+    const { pdfPath } = await this.recordsUseCase.createReport(recordId);
+    const pdf = createReadStream(pdfPath);
+    return new StreamableFile(pdf);
   }
 }

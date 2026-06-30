@@ -58,3 +58,6 @@ dist
 *.db
 generated
 *.env
+
+*.pdf
+*-manifest.json

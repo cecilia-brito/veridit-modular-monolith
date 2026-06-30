@@ -6,7 +6,8 @@ import { AuditModule } from './modules/audit/audit.module';
 import { CreditsModule } from './modules/credits/credits.module';
 import { CaptureModule } from './modules/capture/capture.module';
 import { EmailModule } from './shared/infrastructure/email/email.module';
-
+import { PdfUseCaseToken } from './shared/application/ports/in/PdfUseCase';
+import { PdfService } from './shared/application/usecases/PdfService';
 
 @Module({
   imports: [
@@ -22,6 +23,11 @@ import { EmailModule } from './shared/infrastructure/email/email.module';
     }),
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: PdfUseCaseToken,
+      useClass: PdfService,
+    }
+  ],
 })
 export class AppModule { }
