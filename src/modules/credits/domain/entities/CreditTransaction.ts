@@ -6,12 +6,23 @@ export type PaymentMethod = 'Pix' | 'Mercado Pago';
 export interface CreditTransactionProps {
   id?: string;
   userId: string;
+  userName: string;
+  userEmail: string;
+  userCpf: string;
   pacoteNome: string;
   valorTotal: number;
   metodoPagamento: PaymentMethod;
   status?: TransactionStatus;
   dataCriacao?: Date;
   dataAtualizacao?: Date;
+  telefone?: string;
+  cep?: string;
+  endereco?: string;
+  numero?: string;
+  complemento?: string;
+  bairro?: string;
+  cidade?: string;
+  estado?: string;
 }
 
 export class CreditTransaction {
@@ -19,6 +30,9 @@ export class CreditTransaction {
   // Ninguém fora desta classe pode alterar estes dados diretamente sem passar pelas regras de negócio.
   private readonly _id: string;
   private readonly _userId: string;
+  private readonly _userName: string;
+  private readonly _userEmail: string;
+  private readonly _userCpf: string;
   private readonly _pacoteNome: string;
   private readonly _valorTotal: number;
   private readonly _metodoPagamento: PaymentMethod;
@@ -26,16 +40,36 @@ export class CreditTransaction {
   private readonly _dataCriacao: Date;
   private _dataAtualizacao: Date;
 
+  private readonly _telefone?: string;
+  private readonly _cep?: string;
+  private readonly _endereco?: string;
+  private readonly _numero?: string;
+  private readonly _complemento?: string;
+  private readonly _bairro?: string;
+  private readonly _cidade?: string;
+  private readonly _estado?: string;
+
   // O construtor é privado. Forçamos a criação da entidade através do método estático 'create'.
   private constructor(props: CreditTransactionProps) {
     this._id = props.id || uuidv4();
     this._userId = props.userId;
+    this._userName = props.userName;
+    this._userEmail = props.userEmail;
+    this._userCpf = props.userCpf;
     this._pacoteNome = props.pacoteNome;
     this._valorTotal = props.valorTotal;
     this._metodoPagamento = props.metodoPagamento;
     this._status = props.status || 'PENDENTE';
     this._dataCriacao = props.dataCriacao || new Date();
     this._dataAtualizacao = props.dataAtualizacao || new Date();
+    this._telefone = props.telefone;
+    this._cep = props.cep;
+    this._endereco = props.endereco;
+    this._numero = props.numero;
+    this._complemento = props.complemento;
+    this._bairro = props.bairro;
+    this._cidade = props.cidade;
+    this._estado = props.estado;
   }
 
   // Fabrica da Entidade (Factory Method)
@@ -43,6 +77,18 @@ export class CreditTransaction {
   public static create(props: CreditTransactionProps): CreditTransaction {
     if (!props.userId) {
       throw new Error('Uma transação de crédito precisa obrigatoriamente de um utilizador vinculado.');
+    }
+
+    if (!props.userName) {
+      throw new Error('O nome do comprador é obrigatório.');
+    }
+
+    if (!props.userEmail) {
+      throw new Error('O email do comprador é obrigatório.');
+    }
+
+    if (!props.userCpf || props.userCpf.length !== 11) {
+      throw new Error('O CPF do comprador deve conter exatamente 11 dígitos.');
     }
     
     if (props.valorTotal <= 0) {
@@ -55,6 +101,9 @@ export class CreditTransaction {
   // GETTERS: Permitem que as outras camadas (como o UseCase e o Prisma Adapter) leiam os dados
   public get id(): string { return this._id; }
   public get userId(): string { return this._userId; }
+  public get userName(): string { return this._userName; }
+  public get userEmail(): string { return this._userEmail; }
+  public get userCpf(): string { return this._userCpf; }
   public get pacoteNome(): string { return this._pacoteNome; }
   public get valorTotal(): number { return this._valorTotal; }
   public get metodoPagamento(): PaymentMethod { return this._metodoPagamento; }
@@ -62,6 +111,15 @@ export class CreditTransaction {
   public get dataCriacao(): Date { return this._dataCriacao; }
   public get dataAtualizacao(): Date { return this._dataAtualizacao; }
 
+  //dados do faturamento
+  public get telefone(): string | undefined { return this._telefone; }
+  public get cep(): string | undefined { return this._cep; }
+  public get endereco(): string | undefined { return this._endereco; }
+  public get numero(): string | undefined { return this._numero; }
+  public get complemento(): string | undefined { return this._complemento; }
+  public get bairro(): string | undefined { return this._bairro; }
+  public get cidade(): string | undefined { return this._cidade; }
+  public get estado(): string | undefined { return this._estado; }
   // REGRAS DE NEGÓCIO DE MUTAÇÃO DE ESTADO
   // Em DDD, nós não usamos "setters" burros. Criamos métodos com significado semântico real.
   

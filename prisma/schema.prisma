@@ -38,3 +38,23 @@ model Record {
   videoCount Int
   createdAt  DateTime  @default(now())
 }
+model CreditTransaction {
+  id              String   @id @default(cuid())
+  userId          String
+  pacoteNome      String
+  valorTotal      Float
+  metodoPagamento String   // 'MERCADO_PAGO' ou 'PIX'
+  
+  // Dados de Faturamento retirado da REQ 05
+  telefone        String?
+  cep             String?
+  endereco        String?
+  numero          String?
+  complemento     String?
+  bairro          String?
+  cidade          String?
+  estado          String?
+  
+  status          String   @default("PENDENTE")
+  createdAt       DateTime @default(now())
+}

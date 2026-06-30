@@ -28,17 +28,29 @@ export class BuyCreditsService implements BuyCreditsUseCase {
     // 1. Cria a entidade de domínio e persiste (REQ 05)
     const transaction = CreditTransaction.create({
       userId: command.userId,
+      userName: command.nome,
+      userEmail: command.userEmail,
+      userCpf: command.cpf,
       pacoteNome: command.pacote,
       valorTotal: valor,
-      metodoPagamento: command.metodoPagamento
+      metodoPagamento: command.metodoPagamento,
+      telefone: command.telefone,
+      cep: command.cep,
+      endereco: command.endereco,
+      numero: command.numero,
+      complemento: command.complemento,
+      bairro: command.bairro,
+      cidade: command.cidade,
+      estado: command.estado,
     });
     await this.repo.save(transaction);
 
     // 2. Comunica com o Gateway para gerar o payload de pagamento (REQ 06)
-    const paymentPayload = await this.paymentGateway.generatePaymentDetails(
-      transaction.id,
+    const { paymentPayload, paymentQrCodeBase64 } = await this.paymentGateway.generatePaymentDetails(
+      transaction,
       valor,
-      command.metodoPagamento
+      command.metodoPagamento,
+      command.userEmail
     );
 
     // 3. JOB ASSÍNCRONO (Fire and Forget) (REQ 07)
@@ -51,6 +63,7 @@ export class BuyCreditsService implements BuyCreditsUseCase {
     return {
       transactionId: transaction.id,
       paymentPayload,
+      paymentQrCodeBase64,
     };
   }
 }

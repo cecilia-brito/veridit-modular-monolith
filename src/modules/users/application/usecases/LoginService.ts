@@ -36,7 +36,8 @@ export class LoginService implements LoginUseCase {
     const token = this.jwtService.sign({
       sub: user.id,
       role: user.role,
-      name: user.fullName			
+      name: user.fullName,
+      email: user.email.value,
     });
 
 
