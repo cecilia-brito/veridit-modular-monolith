@@ -1,16 +1,22 @@
 # Veridit Core - Monólito Modular Hexagonal
 
-Este projeto é a implementação parcial (30% dos requisitos) para o sistema Veridit, desenvolvida como o Trabalho III da disciplina de Engenharia de Software I (UFBA).
+Este projeto é a implementação parcial (70% dos requisitos) para o sistema Veridit, desenvolvida como o Trabalho final da disciplina de Engenharia de Software I (UFBA).
 
 A arquitetura adota o padrão de **Monólito Modular** com **Arquitetura Hexagonal (Ports & Adapters)**, respeitando as decisões de design registradas em `ADRs.pdf` e os princípios **SOLID**.
 
-## Requisitos Implementados nesta Sprint (30%)
+## Requisitos Implementados.
 
 - **REQ 01 – Cadastrar Usuário (Alta)**
 - **REQ 02 – Recuperar Senha (Média)**
 - **REQ 03 – Logar no Sistema (Alta)**
 - **REQ 04 – Sair do Sistema (Alta)**
+- **REQ 05 – Comprar Créditos**
+- **REQ 06 – Efetuar Pagamento de Créditos**
+- **REQ 07 – Confirmar Pagamento por email**
+- **REQ 10 – Confirmar Gravação de Conteúdo por email**
 - **REQ 12 – Listar Registros Realizados (Média/Alta)**
+- **REQ 13 – Visualizar Detalhes dos Registros realizados**
+- **REQ 14 – Gerar relatório do Registro realizado**
 
 ---
 
@@ -52,17 +58,23 @@ Para executar e testar o sistema, você precisará ter instalado:
    npm install
    ```
 
-3. **Gerar o Cliente Prisma (ORM):**
+3. **Configurar as Variáveis de Ambiente:**
+   Copie o arquivo `.env.example` para `.env` e preencha as variáveis necessárias:
+   ```bash
+   cp .env.example .env
+   ```
+
+4. **Gerar o Cliente Prisma (ORM):**
    ```bash
    npx prisma generate
    ```
 
-4. **Rodar as Migrações do Banco de Dados (PostgreSQL):**
+5. **Rodar as Migrações do Banco de Dados (PostgreSQL):**
    ```bash
    npx prisma migrate dev
    ```
 
-5. **Iniciar a Aplicação em Modo de Desenvolvimento:**
+6. **Iniciar a Aplicação em Modo de Desenvolvimento:**
    ```bash
    npm run start:dev
    ```
