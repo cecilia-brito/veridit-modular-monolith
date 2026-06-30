@@ -22,7 +22,11 @@ export class RecoverPasswordService implements RecoverPasswordUseCase {
     }
 
     const resetToken = Math.random().toString(36).substring(2, 15);
-    const resetUrl = `https://veridit.com/reset-password?token=${resetToken}`;
+    user.setResetToken(resetToken);
+    await this.userRepository.save(user);
+
+    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const resetUrl = `${baseUrl}/reset-password?token=${resetToken}&email=${encodeURIComponent(user.email.value)}`;
     const subject = 'Recuperação de Senha - Veridit';
     const body = `Olá, ${user.fullName}. Use este link para resetar sua senha: ${resetUrl}`;
     

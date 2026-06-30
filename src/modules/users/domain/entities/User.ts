@@ -14,6 +14,7 @@ interface UserProps {
   oabNumber?: string;
   isActive: boolean;
   createdAt: Date;
+  resetToken?: string;
 }
 
 export class User extends BaseEntity<UserProps> {
@@ -29,6 +30,7 @@ export class User extends BaseEntity<UserProps> {
   get oabNumber(): string | undefined { return this.props.oabNumber; }
   get isActive(): boolean { return this.props.isActive; }
   get createdAt(): Date { return this.props.createdAt; }
+  get resetToken(): string | undefined { return this.props.resetToken; }
 
   public static create(props: Omit<UserProps, 'isActive' | 'createdAt'>, id?: string): User {
     if (props.role === 'LAWYER' && !props.oabNumber) {
@@ -47,5 +49,11 @@ export class User extends BaseEntity<UserProps> {
   }
   public updatePassword(newPassword: string): void {
     this.props.password = Password.create(newPassword); 
+  }
+  public setResetToken(token: string): void {
+    this.props.resetToken = token;
+  }
+  public clearResetToken(): void {
+    this.props.resetToken = undefined;
   }
 }

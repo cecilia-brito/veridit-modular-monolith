@@ -24,6 +24,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
 			oabNumber: user.oabNumber,
 			isActive: user.isActive,
 			createdAt: user.createdAt,
+			resetToken: user.resetToken,
 		};
 		this.usersDb.set(user.id, rawData);
 		console.log(`[Repository] Usuário salvo no banco: ${user.fullName} (${user.id})`);
@@ -54,7 +55,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
 	}
 	
 	private mapToDomain(rawData: any): User {
-		return User.create(
+		const user = User.create(
 			{
 				fullName: rawData.fullName,
 				email: Email.create(rawData.email),
@@ -65,5 +66,9 @@ export class PrismaUserRepository implements UserRepositoryPort {
 			},
 			rawData.id,
 		);
+		if (rawData.resetToken) {
+			user.setResetToken(rawData.resetToken);
+		}
+		return user;
 	}
 }

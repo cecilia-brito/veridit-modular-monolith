@@ -35,37 +35,32 @@ export function LoginScreen({ onNavigate }: LoginScreenProps) {
     }
   };
 
- const handleRecoverPassword = async () => {
+  const handleRecoverPassword = async () => {
     setError('');
     setSuccess('');
     
-    // Agora exigimos que ele preencha ambos os campos para o MVP
-    if (!email || !password) {
-      setError('Para redefinir: Digite seu e-mail e a NOVA senha nos campos acima, depois clique em "Esqueci minha senha".');
+    if (!email) {
+      setError('Por favor, digite seu e-mail corporativo antes de solicitar a recuperação.');
       return;
     }
     
     try {
-      // 1. Chama a nova rota passando a senha nova
-      const response = await api.post('/users/reset-password', { 
-        email: email,
-        newPassword: password 
-      });
+      setLoading(true);
+      const response = await api.post('/users/recover-password', { email });
 
-      // 2. O REQUISITO DA APRESENTAÇÃO: Imprime no console do navegador (F12)
       console.log('%c=========================================', 'color: #00ff00; font-weight: bold;');
-      console.log('%c🔒 VERIDIT DEMO - MUDANÇA DE SENHA', 'color: #00ff00; font-size: 14px; font-weight: bold;');
+      console.log('%c🔒 VERIDIT DEMO - RECUPERAÇÃO DE SENHA', 'color: #00ff00; font-size: 14px; font-weight: bold;');
       console.log('E-mail alvo:', email);
-      console.log('Nova Senha registrada:', password);
       console.log('Resposta do Servidor:', response.data);
       console.log('%c=========================================', 'color: #00ff00; font-weight: bold;');
 
-      // 3. Mostra a mensagem de sucesso na tela
-      setSuccess('Senha alterada com sucesso! Você já pode clicar em "Entrar" com a nova senha.');
+      setSuccess('Se o e-mail existir, um link de recuperação foi enviado. Verifique sua caixa de entrada.');
       
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao tentar redefinir a senha.');
-      console.error('Falha na redefinição:', err);
+      setError(err.response?.data?.message || 'Erro ao tentar recuperar a senha.');
+      console.error('Falha na recuperação:', err);
+    } finally {
+      setLoading(false);
     }
   };
 

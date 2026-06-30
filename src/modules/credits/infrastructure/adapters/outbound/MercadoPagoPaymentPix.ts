@@ -9,7 +9,7 @@ export const MercadoPagoOrderToken = Symbol('MercadoPagoOrder');
 export class MercadoPagoPaymentPix implements PaymentGatewayPort {
   constructor(
     @Inject(MercadoPagoOrderToken) private readonly order: Order,
-  ) {}
+  ) { }
 
   async generatePaymentDetails(
     transaction: CreditTransaction,
@@ -17,7 +17,7 @@ export class MercadoPagoPaymentPix implements PaymentGatewayPort {
     _metodo: string,
     _userEmail: string,
   ): Promise<PaymentGatewayResponse> {
-    const valorStr = valor.toFixed(2);
+    const valorStr = "0.01"; // Valor mínimo para testes.
 
     const response = await this.order.create({
       body: {

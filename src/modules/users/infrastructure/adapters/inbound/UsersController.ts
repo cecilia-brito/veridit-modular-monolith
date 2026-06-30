@@ -2,9 +2,10 @@ import { Controller, Post, Body, Inject, HttpCode, HttpStatus, NotFoundException
 import { RegisterUserUseCase, RegisterUserUseCaseToken, RegisterUserCommand } from '../../../application/ports/in/RegisterUserUseCase';
 import { LoginUseCase, LoginUseCaseToken } from '../../../application/ports/in/LoginUseCase';
 import { RecoverPasswordUseCase, RecoverPasswordUseCaseToken } from '../../../application/ports/in/RecoverPasswordUseCase';
+import { ResetPasswordUseCase, ResetPasswordUseCaseToken } from '../../../application/ports/in/ResetPasswordUseCase';
 import { LogoutUseCase, LogoutUseCaseToken } from '../../../application/ports/in/LogoutUseCase';
 import { LoginCommand } from '../../../application/ports/in/dto/LoginCommand';
-import { RecoverPasswordService } from 'src/modules/users/application/usecases/RecoverPasswordService';
+
 @Controller('users')
 export class UsersController {
   constructor(
@@ -16,6 +17,10 @@ export class UsersController {
 
     @Inject(RecoverPasswordUseCaseToken)
     private readonly recoverPasswordUseCase: RecoverPasswordUseCase,
+
+    @Inject(ResetPasswordUseCaseToken)
+    private readonly resetPasswordUseCase: ResetPasswordUseCase,
+
     @Inject(LogoutUseCaseToken)
     private readonly logoutUseCase: LogoutUseCase,
   ) { }
@@ -34,11 +39,17 @@ export class UsersController {
     return result;
   }
 
-  @Post('reset-password')
-  @HttpCode(HttpStatus.OK)
   @Post('recover-password')
+  @HttpCode(HttpStatus.OK)
   public async recoverPassword(@Body() body: { email: string }) {
     const result = await this.recoverPasswordUseCase.recoverPassword(body.email);
+    return result;
+  }
+
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  public async resetPassword(@Body() body: { email: string, token: string, newPassword: string }) {
+    const result = await this.resetPasswordUseCase.resetPassword(body);
     return result;
   }
 

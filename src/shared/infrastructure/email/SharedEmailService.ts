@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { MailtrapClient } from 'mailtrap';
+import * as nodemailer from 'nodemailer';
 
 export interface SendMailParams {
   to: string;
@@ -10,32 +10,44 @@ export interface SendMailParams {
 @Injectable()
 export class SharedEmailService {
   private readonly logger = new Logger(SharedEmailService.name);
-  private client: MailtrapClient;
+  private transporter: nodemailer.Transporter;
+  private readonly defaultFrom: string;
 
   constructor() {
-    const token = process.env.MAILTRAP_TOKEN;
-    if (token) {
-      this.client = new MailtrapClient({ token });
+    this.defaultFrom = process.env.SMTP_FROM || '"Private Person" <hello@demomailtrap.co>';
+    const user = process.env.SMTP_USER;
+    const pass = process.env.SMTP_PASS;
+
+    if (user && pass) {
+      this.transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'live.smtp.mailtrap.io',
+        port: parseInt(process.env.SMTP_PORT || '587', 10),
+        auth: {
+          user: user,
+          pass: pass,
+        },
+      });
     } else {
-      this.logger.warn('MAILTRAP_TOKEN não configurado. O envio de e-mails falhará.');
+      this.logger.warn('SMTP_USER ou SMTP_PASS não configurados. O envio de e-mails falhará.');
     }
   }
 
   async sendMail(params: SendMailParams): Promise<void> {
-    if (!this.client) {
-      this.logger.error('Mailtrap client não inicializado.');
+    if (!this.transporter) {
+      this.logger.error('Nodemailer transporter não inicializado.');
       return;
     }
 
+    const toAddress = process.env.SMTP_TO_OVERRIDE || params.to;
+
     try {
-      const response = await this.client.send({
-        from: { email: 'hello@demomailtrap.co', name: 'Equipe Veridit' },
-        to: [{ email: params.to }],
+      const info = await this.transporter.sendMail({
+        from: this.defaultFrom,
+        to: toAddress,
         subject: params.subject,
         html: params.html,
-        category: 'Veridit App',
       });
-      this.logger.log(`E-mail enviado com sucesso para ${params.to}. MessageIds: ${response.message_ids?.join(', ')}`);
+      this.logger.log(`E-mail enviado com sucesso para ${params.to}. MessageId: ${info.messageId}`);
     } catch (error) {
       this.logger.error(`Falha ao enviar e-mail para ${params.to}: ${error}`);
       throw error;
